@@ -1,0 +1,20 @@
+.progress-bar {
+  text-align: center;
+
+  & > div {
+  position: relative;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #ccc;
+  
+  & > div {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: $primaryColor;
+    transition: 0.5s width;
+  }
+  }
+}

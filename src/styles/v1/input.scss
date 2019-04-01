@@ -1,0 +1,16 @@
+.subscription-input {
+  margin-top: 0px;
+  margin-bottom: 10px;
+
+  &[type="text"], &[type="number"] {
+    width: 100%;
+  }
+  &[type="radio"] {
+    margin-right: 10px;
+  }
+}
+
+.cashier-card-label {
+  display: inline-block;
+  vertical-align: middle;
+}

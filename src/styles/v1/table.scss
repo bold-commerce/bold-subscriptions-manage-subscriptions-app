@@ -1,0 +1,44 @@
+.subscription-responsive-cell-collapse {
+  display: none;
+}
+
+@media all and (max-width: 900px) {
+  table.subscription-responsive-table {
+    display: block;
+
+    thead, tbody {
+      display: block;
+      tr {
+        display: block;
+        th, td {
+          display: block;
+        }
+      }
+    }
+
+    thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    tbody tr {
+      margin-bottom: 20px;
+      td {
+        display: flex;
+        justify-content: space-between;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+      }
+    }
+  }
+
+  .subscription-responsive-cell-collapse {
+    display: block;
+  }
+
+  .subscription-responsive-cell-body {
+    text-align: right;
+  }
+}

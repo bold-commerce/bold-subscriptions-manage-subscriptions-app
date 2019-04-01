@@ -1,0 +1,31 @@
+.upcoming-order {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  &-details {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 750px) {
+  .upcoming-order {
+    display: block;
+
+    & > .flex-column {
+      padding-right: 0;
+    }
+
+    .upcoming-order-details {
+      display: block;
+    }
+  }
+}

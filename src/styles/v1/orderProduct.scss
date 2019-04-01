@@ -1,0 +1,30 @@
+.order-product {
+  display: flex;
+  align-items: center;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  &-details {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 750px) {
+  .order-product {
+    display: block;
+
+    & > .flex-column {
+      padding-right: 0;
+    }
+
+    .order-product-details {
+      display: block;
+    }
+  }
+}

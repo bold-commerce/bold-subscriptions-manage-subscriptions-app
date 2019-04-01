@@ -1,0 +1,82 @@
+.msp__btn-group {
+  display: flex;
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
+
+  @media screen and (min-width: 381px) {
+    &.btn-group--split button:last-child {
+      margin-right: auto;
+    }
+    &.btn-group--left button:first-child {
+      margin-right: auto;
+    }
+    &.btn-group--left button:nth-of-type(n+2) {
+      margin-right: 10px;
+    }
+    &.btn-group--right button:nth-of-type(n+2) {
+      margin-right: 10px;
+    }
+  }
+}
+@media screen and (max-width: 380px) {
+  .msp__btn-group {
+    justify-content: center;
+    > button {
+      margin-right: initial;
+      margin-left: initial;
+    }
+  }
+}
+
+.subscription-button {
+  margin-bottom: 5px;
+  .subscription-loading-icon {
+    margin-left: 5px;
+  }
+  &.msp__link {
+    background-color: transparent;
+    color: #3399cc;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    margin: 0;
+    &.msp__link--alert {
+      color: #D0021B;
+      &:hover {
+        color: #BB0219;
+      }
+    }
+    &:hover {
+      color: #297aa3;
+      text-decoration: underline;
+    }
+    &:focus {
+      outline: none;
+    }
+  }
+  &.msp__btn {
+    color: white;
+    padding: 10px 20px;
+    border-radius: 3px;
+    font-size: 14px;
+    line-height: 19px;
+    outline: none;
+    border-style: none;
+    &.msp__btn--primary {
+      background-color: #099CCC;
+    }
+    &.msp__btn--secondary {
+      background-color: #CCCCCC;
+    }
+    &.msp__btn--alert {
+      background-color: #D0021B;
+    }
+    &:disabled {
+      opacity: 0.5;
+    }
+    &:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+  }
+}

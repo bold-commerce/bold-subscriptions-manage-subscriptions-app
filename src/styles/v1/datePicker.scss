@@ -1,0 +1,39 @@
+.msp__date-picker {
+  table.CalendarMonth_table {
+    border: initial;
+    margin: auto;
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  li {
+    margin: auto;
+  }
+  ul.DayPicker_weekHeader_ul {
+    margin-left: 0;
+  }
+  td {
+    padding: 0;
+    border: initial;
+    margin: initial;
+  }
+  td.CalendarDay {
+    border: 1px solid #e4e7e7;
+  }
+  div.DateInput {
+    width: auto;
+  }
+  input.DateInput_input {
+    width: 200px;
+    &.DateInput_input__focused {
+      border-bottom: 2px solid $primaryColor;
+    }
+  }
+  td.CalendarDay__selected {
+    background: $primaryColor;
+    color: $white;
+  }
+  div.DayPicker__withBorder {
+    box-shadow: 0 2px 6px rgba(0,0,0,.05), 0 0 0 1px rgba(0,0,0,.17);
+    border-radius: 3px;
+  }
+}

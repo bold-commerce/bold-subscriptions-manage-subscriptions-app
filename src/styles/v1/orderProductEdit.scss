@@ -1,0 +1,20 @@
+.order-product-subtotal, .order-product-shipping-rates-desc,
+.order-product-edit-line-subtotal, .order-product-edit-shipping-rates, .order-product-edit-message {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.order-product-edit-header {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+}
+
+@media (max-width: 750px) {
+  .order-product-edit-shipping-rates > div:first-child {
+    width: 100%;
+  }
+
+  .order-product-edit-header {
+    display: none;
+  }
+}

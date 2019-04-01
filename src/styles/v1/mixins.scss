@@ -1,0 +1,16 @@
+@mixin formField() {
+  background-color: #fff;
+  border: initial;
+  align-items: center;
+  cursor: text;
+  vertical-align: middle;
+  border-radius: 4px;
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2) inset;
+  line-height: 1.5rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease-out;
+  &[type="text"], &[type="number"], &:not([type]) {
+    display: block;
+    width: 100%;
+  }
+}

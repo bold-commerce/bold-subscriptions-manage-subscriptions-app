@@ -1,0 +1,32 @@
+.subscription-images-container {
+  > div {
+    position: relative;
+    padding-bottom: 100%;
+  }
+
+  .msp__product-image {
+    display: block;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    &.msp__product-image--single {
+      padding-bottom: 100%;
+      position: relative;
+    }
+    &.msp__product-image--multiple {
+      flex-basis: 46%;
+      margin: 2%;
+    }
+  }
+  .msp__product-image-grid {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 2%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+}

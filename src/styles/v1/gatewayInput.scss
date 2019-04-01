@@ -1,0 +1,35 @@
+.gateway-input-iframe-styles {
+  height: 40px;
+}
+.gateway-input-wrapper {
+  position: relative;
+  margin-bottom: 10px;
+  & + .msp__fake-input {
+    // TODO: Experiment having fake input behind gateway iframe inputs
+  }
+}
+.gateway-input--styled {
+  @include formField();
+  padding: 0.75rem .5rem;
+  &:focus, &.StripeElement--focus, &.braintree-hosted-fields-focused, &.SpreedlyElement--focus {
+    outline: none;
+    box-shadow: 0 0 0px 2px #0099cc inset;
+  }
+  &.braintree-hosted-fields-invalid, &.StripeElement--invalid, &.SpreedlyElement--invalid {
+    box-shadow: 0 0 0 2px red inset;
+    color: red;
+  }
+}
+.gateway-input-container {
+  margin-bottom: 20px;
+
+  .subscription-field {
+    position: relative;
+  }
+}
+.msp__payment-gateway-container {
+  margin-bottom: 10px;
+}
+.subscription-loading-icon + .msp__payment-gateway-form {
+  display: none !important;
+}

@@ -1,0 +1,268 @@
+@import 'variables';
+@import 'mixins';
+@import 'progressBar';
+@import 'productImages';
+@import 'table';
+@import 'select';
+@import 'input';
+@import 'formField';
+@import 'message';
+@import 'button';
+@import 'upcomingOrder';
+@import 'orderProduct';
+@import 'datePicker';
+@import 'orderProductEdit';
+@import 'orderProductRemove';
+@import 'gatewayInput';
+@import 'orderProductSwap';
+
+.text-button {
+  cursor: pointer;
+  color: $primaryColor;
+  transition: 0.2s color;
+  user-select: none;
+  &:hover {
+    color: $primaryDarker;
+  }
+  &-alert {
+    color: $alertColor;
+    &:hover {
+      color: $alertDarker;
+    }
+  }
+}
+
+.transaction-skipped {
+  text-transform: capitalize;
+}
+
+.align-right { text-align: right }
+
+.subscription-flex {
+  display: flex;
+
+  &-align-center {
+    align-items: center;
+  }
+}
+.flex-column {
+  min-width: 0;
+  padding-right: 50px;
+  &:last-child { padding-right: 0; }
+  &-half { flex: 0 0 50%; }
+  &-quarter { flex: 0 0 25%; }
+  &-three-quarters { flex: 0 0 75%; }
+  &-twenty { flex: 0 0 20%; }
+  &-fifteen { flex: 0 0 15%; }
+  &-ten { flex: 0 0 10%; }
+}
+
+.subscription-loading-icon {
+  box-sizing: content-box;
+  display: inline-block;
+  content: '';
+  height: 10px;
+  width: 10px;
+  margin: 0;
+  padding: 0;
+  border: 4px solid currentColor;
+  border-left-color: transparent;
+  border-radius: 10px;
+  vertical-align: middle;
+  animation: subscription-spin 1s infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes subscription-spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.no-subscriptions {
+  padding: 40px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.subscription-container {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  p, table, li {
+    margin: 0;
+    padding: 0;
+  }
+  ul {
+    list-style: initial;
+    margin: 0;
+    padding: 0;
+    margin-left: 20px;
+  }
+  &:last-child {
+    margin-bottom: none;
+  }
+}
+
+.subscription-header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #fff;
+
+  > * {
+    margin: 10px;
+  }
+  .subscription-images-container {
+    flex-basis: 33.33%;
+    min-width: 0;
+  }
+  .subscription-details-container {
+    flex-basis: 66.66%;
+    min-width: 0;
+  }
+}
+
+.subscription-details-block-container {
+  display: flex;
+  margin-top: 15px;
+  .subscription-product-list-item {
+    display: flex;
+
+    .ro-translation-product_with_variant_title,
+    .ro-translation-products_list_product_only_title {
+      display: block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      margin-right: 5px;
+    }
+    .ro-translation-products_list_quantity {
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+  }
+}
+
+.subscription-details-block {
+  margin-bottom: 15px;
+}
+
+.subscription-details-block > p {
+  line-height: 1.0em;
+  margin-bottom: 5px;
+}
+
+.subscription-details-block > p:first-child {
+  font-weight: bold;
+}
+
+.subscription-content-container {
+  background-color: #f2f2f2;
+  border-top: 1px solid #ccc;
+}
+
+.toggle-subscription-content {
+  cursor: pointer;
+  text-align: center;
+  padding: 5px;
+  transition: 0.2s color;
+  user-select: none;
+  &:hover {
+    color: $primaryColor;
+  }
+}
+
+.subscription-content {
+  padding: 16px;
+  &.altered {
+    display: none;
+  }
+}
+
+.subscription-content-block {
+  border: 1px solid #ccc;
+  border-bottom: none;
+  border-radius: 4px;
+  background-color: #fff;
+  margin-bottom: 16px;
+}
+
+.subscription-content-block-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background-color: #ddd;
+  border-bottom: 1px solid #ccc;
+  border-radius: 4px;
+  & p {
+    cursor: pointer;
+    transition: 0.2s color;
+  }
+  & p:hover {
+    color: $primaryColor;
+  }
+}
+
+.subscription-content-block-header p {
+  line-height: 1.5em;
+  margin-bottom: 0;
+  user-select: none;
+}
+
+.subscription-content-block-body {
+  padding: 16px;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+  border-radius: 4px;
+  &.altered {
+    display: none;
+  }
+}
+
+.cashier-card-iframe {
+  border: none;
+  height: 300px;
+  width: 100%;
+}
+
+.subscription-content-chevron {
+  display: inline-block;
+  margin-left: 5px;
+  transition: 0.2s transform;
+  &.altered {
+    transform: rotate(90deg);
+  }
+}
+.SingleDatePicker_picker {
+  transform: translateX(-10%);
+}
+
+@media (max-width: 750px) {
+  .subscription-header {
+    display: block;
+
+    .subscription-images-container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+  }
+
+  .flex-column {
+    padding: 0px;
+  }
+}
+
+@media (max-width: 600px) {
+  .subscription-details-block-container {
+    display: block;
+    & > .flex-column {
+      padding: 0;
+    }
+  }
+  .subscription-container {
+    overflow: visible;
+  }
+}

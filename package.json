@@ -1,0 +1,56 @@
+{
+  "name": "manage-subscription-app",
+  "version": "0.1.0",
+  "main": "index.js",
+  "author": "Bold Commerce",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack --config webpack.prod.js",
+    "start": "webpack-dev-server --https --config webpack.dev.js",
+    "serve": "http-server -S -C server.crt -K server.key",
+    "test": "jest",
+    "test:watch": "npm test -- --watch --notify",
+    "test:watch-no-notify": "npm test -- --watch",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix"
+  },
+  "resolutions": {
+    "eslint-scope": "3.7.1"
+  },
+  "dependencies": {
+    "classnames": "^2.2.5",
+    "idempotent-babel-polyfill": "^6.26.0-1",
+    "moment": "^2.20.1",
+    "prop-types": "^15.6.0",
+    "query-string": "^6.2.0",
+    "react": "^16.2.0",
+    "react-dates": "^16.7.0",
+    "react-dom": "^16.2.0",
+    "react-redux": "^5.0.6",
+    "redux": "^3.7.2",
+    "redux-saga": "^0.16.0",
+    "whatwg-fetch": "^3.0.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "css-loader": "^0.28.9",
+    "eslint": "^4.16.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.6.1",
+    "http-server": "^0.11.1",
+    "jest": "^22.4.0",
+    "node-sass": "^4.7.2",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.20.1",
+    "uglifyjs-webpack-plugin": "^1.2.5",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.11.1",
+    "webpack-merge": "^4.1.2"
+  }
+}

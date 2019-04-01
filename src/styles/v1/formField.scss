@@ -1,0 +1,22 @@
+.msp__form-field {
+  @include formField();
+  padding: 7px 14px;
+  &.msp__select {
+    width: 100%;
+    height: 38px;
+  }
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0px 2px #0099cc inset;
+  }
+  &[type="text"], &[type="number"] {
+    width: 100%;
+  }
+  &[type="radio"] {
+    margin-right: 10px;
+  }
+  &--with-error {
+    width: 100%;
+    border-color: $errorColor;
+  }
+}

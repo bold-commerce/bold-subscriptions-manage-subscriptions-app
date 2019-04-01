@@ -1,0 +1,18 @@
+{
+  "extends": "airbnb",
+  "rules": {
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "function-paren-newline": ["error", "consistent"],
+    "react/no-danger": "off"
+  },
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "chrome": true,
+    "Stripe": true,
+    "manageSubscription": true,
+    "Spreedly": true,
+    "braintree": true
+  }
+}
