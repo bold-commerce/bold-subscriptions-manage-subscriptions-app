@@ -8,6 +8,7 @@ import Translation from '../Translation';
 import SelectField from './SelectField';
 import formatMoney from '../../helpers/moneyFormatHelpers';
 import { ORDER_PROP_TYPE } from '../../constants/PropTypes';
+import ProductTitleTranslation from './ProductTitleTranslation';
 
 class OrderProductSwapList extends Component {
   constructor(props) {
@@ -59,9 +60,16 @@ class OrderProductSwapList extends Component {
       product,
       variants,
       order,
+      allowMulticurrencyDisplay,
     } = this.props;
 
     let swapProductMessage = null;
+    const exchangeRate = [0, 1, '', null].indexOf(order.currency_exchange_rate) === -1 && allowMulticurrencyDisplay ? order.currency_exchange_rate : 1;
+    const currencyFormat = !allowMulticurrencyDisplay ? null : order.currency_format;
+    const price = (exchangeRate * this.state.selectedVariant.price);
+    const priceDifference = this.state.selectedVariant.price_difference * exchangeRate;
+    const prepaidPriceDifference = this.state.selectedVariant.prepaid_price_difference * exchangeRate;
+
     if (this.state.selectedVariant.price_difference > 0) {
       swapProductMessage = (
         <p>
@@ -69,7 +77,8 @@ class OrderProductSwapList extends Component {
             textKey="order_product_swap_future_charge"
             mergeFields={{
               price_difference: formatMoney(
-                this.state.selectedVariant.price_difference,
+                priceDifference,
+                currencyFormat,
               ),
             }}
           />
@@ -84,7 +93,8 @@ class OrderProductSwapList extends Component {
               textKey="order_product_swap_limited_length_charge"
               mergeFields={{
                 price_difference: formatMoney(
-                  this.state.selectedVariant.price_difference,
+                    priceDifference,
+                    currencyFormat,
                 ),
                 recurrences_remaining: order.order_fixed_recurrences.total_recurrences
                   - order.order_fixed_recurrences.recurrence_count,
@@ -99,12 +109,14 @@ class OrderProductSwapList extends Component {
                 textKey="order_product_swap_prepaid_charge"
                 mergeFields={{
                   price_difference: formatMoney(
-                    this.state.selectedVariant.price_difference,
+                      priceDifference,
+                      currencyFormat,
                   ),
                   recurrences_remaining: order.order_fixed_recurrences.total_recurrences
                   - order.order_fixed_recurrences.recurrence_count,
                   prepaid_additional_charge: formatMoney(
-                    this.state.selectedVariant.prepaid_price_difference,
+                      prepaidPriceDifference,
+                      currencyFormat,
                   ),
                 }}
               />
@@ -124,12 +136,9 @@ class OrderProductSwapList extends Component {
             <div className="flex-column flex-column-three-quarters">
               <div className="subscription-details-block">
                 <p>
-                  <Translation
-                    textKey="product_with_variant_title"
-                    mergeFields={{
-                      product_title: product.shopify_data.title || '',
-                      variant_title: this.state.selectedVariant.title || '',
-                    }}
+                  <ProductTitleTranslation
+                    productTitle={product.shopify_data.title || ''}
+                    variantTitle={this.state.selectedVariant.title || ''}
                   />
                 </p>
                 {
@@ -142,8 +151,10 @@ class OrderProductSwapList extends Component {
                  />
                 }
                 <p>
-                  <span className="product-info-price" dangerouslySetInnerHTML={{
-                    __html: formatMoney(this.state.selectedVariant.price)}} />
+                  <span
+                    className="product-info-price"
+                    dangerouslySetInnerHTML={{ __html: formatMoney(price, order.currency_format) }}
+                  />
                 </p>
                 {swapProductMessage}
               </div>
@@ -172,6 +183,7 @@ OrderProductSwapList.propTypes = {
   }).isRequired,
   confirmSwap: PropTypes.func.isRequired,
   variants: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  allowMulticurrencyDisplay: PropTypes.bool.isRequired,
 };
 
 OrderProductSwapList.defaultProps = {
@@ -192,6 +204,7 @@ const mapStateToProps = (state, ownProps) => ({
     .shopify_data.variants.filter(variant =>
       variant.id !== state.data.orders.find(order => order.id === ownProps.orderId)
         .order_products.find(product => product.id === ownProps.swapProductId).variant_id),
+  allowMulticurrencyDisplay: state.data.general_settings.allow_multicurrency_display,
 });
 
 export default connect(mapStateToProps)(OrderProductSwapList);

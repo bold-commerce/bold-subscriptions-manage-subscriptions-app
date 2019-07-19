@@ -59,8 +59,12 @@ class OrderFrequencyBlock extends Component {
     const intervalArray = [];
 
     for (let i = 0; i < group.frequency_info.frequency_types.length; i += 1) {
+      const frequencyTextKey = `interval_type_${group.frequency_info.frequency_types[i].interval_id}`;
+      const frequencyTranslationText =
+        window.manageSubscription.initialState.data.translations[frequencyTextKey];
       intervalArray.push({
-        name: group.frequency_info.frequency_types[i].interval_text,
+        name: frequencyTranslationText,
+        value: group.frequency_info.frequency_types[i].interval_text,
         id: group.frequency_info.frequency_types[i].interval_id,
       });
     }

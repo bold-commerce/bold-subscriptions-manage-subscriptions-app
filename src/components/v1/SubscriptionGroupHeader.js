@@ -12,6 +12,7 @@ import * as OrderHookTypes from '../../constants/OrderHookTypes';
 import OrderPrepaidBlock from './OrderPrepaidBlock';
 import { ORDER_PROP_TYPE } from '../../constants/PropTypes';
 import CardInformationBlock from './CardInformationBlock';
+import PauseResumeButton from './PauseResumeButton';
 
 class SubscriptionGroupHeader extends Component {
   renderSubscriptionTitle() {
@@ -36,6 +37,42 @@ class SubscriptionGroupHeader extends Component {
         textKey="subscription_title_multiple_products"
         mergeFields={mergeFields}
       />
+    );
+  }
+
+  renderPauseResumeStatus() {
+    const { order } = this.props;
+    return (
+      <React.Fragment>
+        { order.is_paused ?
+          <Translation textKey="paused_subscription_status" /> :
+          <Translation textKey="active_subscription_status" />
+        }
+      </React.Fragment>
+    );
+  }
+
+  renderPauseResumeButton() {
+    const { order, allowPauseSubscription } = this.props;
+    return (
+      <React.Fragment>
+        { allowPauseSubscription ?
+          <React.Fragment>&nbsp;<PauseResumeButton order={order} /></React.Fragment> :
+          null
+        }
+      </React.Fragment>
+    );
+  }
+
+  renderSubscriptionStatus() {
+    return (
+      <React.Fragment>
+        <p>
+          <Translation textKey="subscription_status_heading" />
+        </p>
+        { this.renderPauseResumeStatus() }
+        { this.renderPauseResumeButton() }
+      </React.Fragment>
     );
   }
 
@@ -73,7 +110,7 @@ class SubscriptionGroupHeader extends Component {
   }
 
   render() {
-    const { order } = this.props;
+    const { order, allowPauseSubscription } = this.props;
 
     return (
       <div className="subscription-header">
@@ -93,7 +130,11 @@ class SubscriptionGroupHeader extends Component {
             <OrderPrepaidBlock orderId={order.id} /> : null }
           <div className="subscription-details-block-container">
             <div className="flex-column flex-column-half">
-              <ProductList products={order.order_products} />
+              <ProductList
+                products={order.order_products}
+                displayPrice={false}
+                currencyFormat={order.currency_format}
+              />
               <div className="subscription-details-block">
                 <p><Translation textKey="shipping_info_heading" /></p>
                 <p>{order.first_name} {order.last_name}</p>
@@ -113,6 +154,12 @@ class SubscriptionGroupHeader extends Component {
                 <p><Translation textKey="order_frequency_heading" /></p>
                 <OrderFrequencyBlock orderId={this.props.order.id} />
               </div>
+              <div className="subscription-details-block">
+                { !order.is_paused && !allowPauseSubscription ?
+                  null :
+                  this.renderSubscriptionStatus()
+                }
+              </div>
             </div>
           </div>
           { this.renderOrderHooksWarning() }
@@ -125,14 +172,17 @@ class SubscriptionGroupHeader extends Component {
 SubscriptionGroupHeader.propTypes = {
   order: ORDER_PROP_TYPE.isRequired,
   hasDeletedProducts: PropTypes.bool.isRequired,
+  allowPauseSubscription: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const order = state.data.orders.find(o => o.id === ownProps.orderId);
   const hasDeletedProducts = order.order_products.filter(prod => prod.status === 1).length > 0;
+  const allowPauseSubscription = state.data.general_settings.allow_pause_subscription || false;
   return {
     order,
     hasDeletedProducts,
+    allowPauseSubscription,
   };
 };
 

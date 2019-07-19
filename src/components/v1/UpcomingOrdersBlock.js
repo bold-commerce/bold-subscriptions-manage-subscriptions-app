@@ -42,7 +42,6 @@ class UpcomingOrdersBlock extends Component {
 
   render() {
     const { order } = this.props;
-
     let upcomingOrderList = (
       order.next_orders.map(d => (
         order.build_a_box ?

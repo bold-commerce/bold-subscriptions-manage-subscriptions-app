@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import * as actions from '../../actions';
 
 import ProductImages from './ProductImages';
-import LoadingSpinner from './LoadingSpinner';
 import Separator from './Separator';
 import Translation from '../Translation';
 import UpdateOrderShippingMethod from './UpdateOrderShippingMethod';
 import formatMoney from '../../helpers/moneyFormatHelpers';
 import generateFakeShippingRate from '../../helpers/shippingRateHelpers';
+import ProductTitleTranslation from './ProductTitleTranslation';
 
 class OrderProductSwapConfirm extends Component {
   constructor(props) {
@@ -93,17 +93,21 @@ class OrderProductSwapConfirm extends Component {
   }
 
   render() {
-    const { product, variant, order } = this.props;
+    const { product, variant, order, allowMulticurrencyDisplay } = this.props;
+    const exchangeRate = [0, 1, '', null].indexOf(order.currency_exchange_rate) === -1 && allowMulticurrencyDisplay ? order.currency_exchange_rate : 1;
+    const currencyFormat = !allowMulticurrencyDisplay ? null : order.currency_format;
+    const price = variant.price * exchangeRate;
 
     let swapProductMessage = null;
     if (variant.price_difference > 0) {
+      const priceDifference = variant.price_difference * exchangeRate;
       swapProductMessage = (
         <p>
           <Translation
             textKey="order_product_swap_future_charge"
             mergeFields={{
               price_difference: formatMoney(
-                variant.price_difference,
+                priceDifference, currencyFormat,
               ),
             }}
           />
@@ -118,7 +122,7 @@ class OrderProductSwapConfirm extends Component {
               textKey="order_product_swap_limited_length_charge"
               mergeFields={{
                 price_difference: formatMoney(
-                  variant.price_difference,
+                  priceDifference, currencyFormat,
                 ),
                 recurrences_remaining: order.order_fixed_recurrences.total_recurrences
                 - order.order_fixed_recurrences.recurrence_count,
@@ -128,18 +132,24 @@ class OrderProductSwapConfirm extends Component {
         );
       }
       if (order.order_fixed_recurrences !== null && order.order_fixed_recurrences.one_charge_only) {
+        const prepaidPriceDifference = variant.prepaid_price_difference * exchangeRate;
+        const shippingDifference = this.state.shippingRate !== null ?
+          (this.state.shippingRate.price - order.order_shipping_rate.price) * exchangeRate * 100 :
+          null;
+        const shippingTotal = this.getPrepaidShippingTotal() * exchangeRate * 100;
+
         swapProductMessage = (
           <Fragment>
             <Translation
               textKey="order_product_swap_prepaid_charge"
               mergeFields={{
                 price_difference: formatMoney(
-                  variant.price_difference,
+                  priceDifference, currencyFormat,
                 ),
                 recurrences_remaining: order.order_fixed_recurrences.total_recurrences
                 - order.order_fixed_recurrences.recurrence_count,
                 prepaid_additional_charge: formatMoney(
-                  variant.prepaid_price_difference,
+                  prepaidPriceDifference, currencyFormat,
                 ),
               }}
             />
@@ -154,10 +164,12 @@ class OrderProductSwapConfirm extends Component {
                       recurrences_remaining: order.order_fixed_recurrences.total_recurrences
                       - order.order_fixed_recurrences.recurrence_count,
                       shipping_difference: formatMoney(
-                        (this.state.shippingRate.price - order.order_shipping_rate.price) * 100,
+                        shippingDifference,
+                        currencyFormat,
                       ),
                       shipping_total: formatMoney(
-                        this.getPrepaidShippingTotal(),
+                        shippingTotal,
+                        currencyFormat,
                       ),
                     }}
                   />
@@ -180,17 +192,16 @@ class OrderProductSwapConfirm extends Component {
               <div className="flex-column flex-column-three-quarters">
                 <div className="subscription-details-block">
                   <p>
-                    <Translation
-                      textKey="product_with_variant_title"
-                      mergeFields={{
-                        product_title: product.shopify_data.title || '',
-                        variant_title: variant.title || '',
-                      }}
+                    <ProductTitleTranslation
+                      productTitle={product.shopify_data.title || ''}
+                      variantTitle={variant.title || ''}
                     />
                   </p>
                   <p>
-                  <span className="product-info-price" dangerouslySetInnerHTML={{
-                    __html: formatMoney(variant.price)}} />
+                    <span
+                      className="product-info-price"
+                      dangerouslySetInnerHTML={{ __html: formatMoney(price, currencyFormat) }}
+                    />
                   </p>
                   {swapProductMessage}
                 </div>
@@ -217,7 +228,8 @@ class OrderProductSwapConfirm extends Component {
                         textKey="swap_product_prepaid_total_text"
                         mergeFields={{
                           total_prepaid_charges: formatMoney(
-                            variant.prepaid_price_difference + this.getPrepaidShippingTotal(),
+                              (variant.prepaid_price_difference + this.getPrepaidShippingTotal()) * exchangeRate,
+                            order.currency_format,
                           ),
                         }}
                       />
@@ -255,6 +267,7 @@ OrderProductSwapConfirm.propTypes = {
   }),
   dismissProductSwapMessage: PropTypes.func.isRequired,
   dismissGetShippingRatesFailedMessage: PropTypes.func.isRequired,
+  allowMulticurrencyDisplay: PropTypes.bool.isRequired,
 };
 
 OrderProductSwapConfirm.defaultProps = {
@@ -285,6 +298,7 @@ const mapStateToProps = (state, ownProps) => {
       state.userInterface.shippingRates[ownProps.orderId],
     productSwapMessage:
       state.userInterface.productSwapMessages[ownProps.orderId],
+    allowMulticurrencyDisplay: state.data.general_settings.allow_multicurrency_display,
   };
 };
 

@@ -59,6 +59,16 @@ export const ORDER_RESUMING_ORDER = 'Order/ResumingOrder';
 export const ORDER_RESUMED_ORDER = 'Order/ResumedOrder';
 export const ORDER_RESUME_ORDER_FAILED = 'Order/ResumeOrderFailed';
 
+export const ORDER_PAUSE_SUBSCRIPTION = 'Order/PauseSubscription';
+export const ORDER_PAUSED_SUBSCRIPTION = 'Order/PausedSubscription';
+export const ORDER_PAUSING_SUBSCRIPTION = 'Order/PausingSubscription';
+export const ORDER_PAUSE_SUBSCRIPTION_FAILED = 'Order/PauseSubscriptionFailed';
+
+export const ORDER_RESUME_SUBSCRIPTION = 'Order/ResumeSubscription';
+export const ORDER_RESUMING_SUBSCRIPTION = 'Order/ResumingSubscription';
+export const ORDER_RESUMED_SUBSCRIPTION = 'Order/ResumedSubscription';
+export const ORDER_RESUME_SUBSCRIPTION_FAILED = 'Order/ResumeSubscriptionFailed';
+
 export const ORDER_PRODUCT_UPDATE_UPCOMING_QUANTITY = 'Order/UpdateUpcomingQuantity';
 export const ORDER_PRODUCT_UPDATING_UPCOMING_QUANTITY = 'Order/UpdatingUpcomingQuantity';
 export const ORDER_PRODUCT_UPDATED_UPCOMING_QUANTITY = 'Order/UpdatedUpcomingQuantity';
@@ -141,3 +151,5 @@ export const ORDER_APPLY_CANCEL_DISCOUNT = 'Order/ApplyCancelDiscount';
 export const ORDER_APPLYING_CANCEL_DISCOUNT = 'Order/ApplyingCancelDiscount';
 export const ORDER_APPLIED_CANCEL_DISCOUNT = 'Order/AppliedCancelDiscount';
 export const ORDER_APPLY_CANCEL_DISCOUNT_FAILED = 'Order/ApplyCancelDiscountFailed';
+
+export const ORDER_ATTEMPTED_CANCEL_LOG = 'Order/AttemptedCancellation';

@@ -11,6 +11,8 @@ export default function ordersReducer(state, action) {
     case types.ORDER_SKIPPED_ORDER:
     case types.ORDER_UPDATED_NEXT_SHIP_DATE:
     case types.ORDER_RESUMED_ORDER:
+    case types.ORDER_PAUSED_SUBSCRIPTION:
+    case types.ORDER_RESUMED_SUBSCRIPTION:
     case types.ORDER_PRODUCT_UPDATED_QUANTITY:
     case types.ORDER_PRODUCT_UPDATED_UPCOMING_QUANTITY:
     case types.ORDER_PRODUCT_SAVED_SWAP:

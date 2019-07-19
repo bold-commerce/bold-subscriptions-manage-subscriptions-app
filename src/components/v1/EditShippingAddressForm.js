@@ -11,6 +11,7 @@ import Translation from '../Translation';
 import * as actions from '../../actions';
 import ButtonGroup from './ButtonGroup';
 import { MESSAGE_PROP_TYPE, ORDER_PROP_TYPE } from '../../constants/PropTypes';
+import { getProvinceOptions, getProvinceName, countryHasProvinces } from '../../helpers/provinceHelpers';
 
 class EditShippingAddressForm extends Component {
   constructor(props) {
@@ -45,9 +46,7 @@ class EditShippingAddressForm extends Component {
     this.saveShippingAddress = this.saveShippingAddress.bind(this);
     this.checkFields = this.checkFields.bind(this);
     this.dismissMessage = this.dismissMessage.bind(this);
-    this.selectedCountryHasProvinces = this.selectedCountryHasProvinces.bind(this);
     this.selectedCountryZipRequired = this.selectedCountryZipRequired.bind(this);
-    this.getProvinceOptions = this.getProvinceOptions.bind(this);
     this.saveFromUpdateShippingMethod = this.saveFromUpdateShippingMethod.bind(this);
     this.formElement = null;
   }
@@ -91,18 +90,6 @@ class EditShippingAddressForm extends Component {
     }
 
     return countryOptions;
-  }
-
-  getProvinceOptions() {
-    if (!this.selectedCountryHasProvinces()) {
-      return [];
-    }
-
-    return window.Countries[this.state.selectedCountry].provinces.map(p => ({ name: p }));
-  }
-
-  selectedCountryHasProvinces() {
-    return window.Countries[this.state.selectedCountry].provinces !== null;
   }
 
   selectedCountryZipRequired() {
@@ -224,6 +211,11 @@ class EditShippingAddressForm extends Component {
       shippingMessage,
       getShippingRatesFailedMessage,
     } = this.props;
+    const selectedCountryHasProvinces = countryHasProvinces(this.state.selectedCountry);
+    const provinces = getProvinceOptions(this.state.selectedCountry);
+    // eslint-disable-next-line max-len
+    const orderShippingProvince = getProvinceName(this.state.formInformation.country, this.state.formInformation.province);
+
     return this.state.editing ?
       (
         <div>
@@ -306,11 +298,11 @@ class EditShippingAddressForm extends Component {
                   labelTextKey="msp_country"
                   onChange={this.shippingCountryChange}
                 />
-                {this.selectedCountryHasProvinces() ?
+                {selectedCountryHasProvinces ?
                   <SelectField
                     name="province"
-                    defaultValue={this.state.formInformation.province}
-                    options={this.getProvinceOptions()}
+                    defaultValue={orderShippingProvince}
+                    options={provinces}
                     labelTextKey="state_province"
                     onChange={this.checkFields}
                   />
@@ -375,7 +367,7 @@ class EditShippingAddressForm extends Component {
             <p>{order.company}</p>
             <p>
               {order.city}
-              {this.selectedCountryHasProvinces() ? ` ${order.province}` : null}
+              {selectedCountryHasProvinces ? ` ${order.province}` : null}
               {this.selectedCountryZipRequired() ? `, ${order.zip}` : null}
             </p>
             <p>{order.country}</p>

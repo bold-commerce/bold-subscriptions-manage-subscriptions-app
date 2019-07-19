@@ -13,6 +13,7 @@ import Translation from '../Translation';
 import UpcomingOrdersBlock from './UpcomingOrdersBlock';
 import OrderCancellationBlock from './OrderCancellationBlock';
 import { ORDER_PROP_TYPE } from '../../constants/PropTypes';
+import formatMoney from '../../helpers/moneyFormatHelpers';
 
 class SubscriptionGroup extends Component {
   constructor(props) {

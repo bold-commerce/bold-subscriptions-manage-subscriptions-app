@@ -12,7 +12,7 @@ import Message from './Message';
 import Button from './Button';
 import ButtonGroup from './ButtonGroup';
 import { ORDER_PROP_TYPE, MESSAGE_PROP_TYPE } from '../../constants/PropTypes';
-import formatMoney from "../../helpers/moneyFormatHelpers";
+import formatMoney from '../../helpers/moneyFormatHelpers';
 
 class OrderProductEditQuantityBlock extends Component {
   constructor(props) {
@@ -112,11 +112,13 @@ class OrderProductEditQuantityBlock extends Component {
     const { order, orderDate } = this.props;
     const productTotals = order.order_products.map((prod) => {
       const qty = orderDate !== null &&
-        order.order_product_exceptions.find(exception => exception.date === orderDate)
+      order.order_product_exceptions.find(exception => exception.date === orderDate)
         ? order.order_product_exceptions.find(exception => exception.date === orderDate)
           .products.find(product => product.product_internal_id === prod.id).quantity
         : prod.quantity;
-      return parseFloat(prod.price * parseInt(qty, 10));
+      const basePrice = (prod.converted_price > 0 ? (prod.converted_price / 100).toFixed(2).toString() : prod.price);
+
+      return parseFloat(basePrice * parseInt(qty, 10));
     });
     return 100 * productTotals.reduce((a, b) => parseFloat(a + b));
   }
@@ -124,9 +126,11 @@ class OrderProductEditQuantityBlock extends Component {
   calculateSubtotal() {
     const { order } = this.props;
     const inputData = new FormData(this.formElement);
-    const productTotals = order.order_products.map(prod => (
-      parseFloat(prod.price * getQuantity(parseInt(inputData.get(`product_editing_quantity_${prod.id}`), 10)))
-    ));
+    const productTotals = order.order_products.map((prod) => {
+      const basePrice = (prod.converted_price > 0 ? (prod.converted_price / 100).toFixed(2).toString() : prod.price);
+
+      return parseFloat(basePrice * getQuantity(parseInt(inputData.get(`product_editing_quantity_${prod.id}`), 10)));
+    });
     const subtotal = 100 * productTotals.reduce((a, b) => parseFloat(a + b));
     this.setState({ subtotal });
   }
@@ -262,8 +266,10 @@ class OrderProductEditQuantityBlock extends Component {
           <div className="order-product-subtotal">
             <h6>
               <Translation textKey="product_editing_subtotal" />
-                <span className="product-info-price" dangerouslySetInnerHTML={{
-                    __html: formatMoney(this.state.subtotal)}} />
+              <span
+                className="product-info-price"
+                dangerouslySetInnerHTML={{ __html: formatMoney(this.state.subtotal, order.currency_format) }}
+              />
             </h6>
           </div>
           {

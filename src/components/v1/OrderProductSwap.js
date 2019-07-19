@@ -11,6 +11,7 @@ import OrderProductSwapConfirm from './OrderProductSwapConfirm';
 import LoadingSpinner from './LoadingSpinner';
 import formatMoney from '../../helpers/moneyFormatHelpers';
 import { ORDER_PROP_TYPE, PRODUCT_PROP_TYPE } from '../../constants/PropTypes';
+import ProductTitleTranslation from './ProductTitleTranslation';
 
 class OrderProductSwap extends Component {
   constructor(props) {
@@ -69,7 +70,10 @@ class OrderProductSwap extends Component {
   }
 
   render() {
-    const { order, product, group } = this.props;
+    const { order, product, group, allowMulticurrencyDisplay } = this.props;
+    const exchangeRate = [0, 1, '', null].indexOf(order.currency_exchange_rate) === -1 && allowMulticurrencyDisplay ? order.currency_exchange_rate : 1;
+    const currencyFormat = !allowMulticurrencyDisplay ? null : order.currency_format;
+    const price = (exchangeRate * product.price) * 100;
 
     let swappableProducts = null;
     if (this.state.confirmSwap) {
@@ -121,17 +125,16 @@ class OrderProductSwap extends Component {
               <div className="flex-column flex-column-three-quarters">
                 <div className="subscription-details-block">
                   <p>
-                    <Translation
-                      textKey="product_with_variant_title"
-                      mergeFields={{
-                        product_title: product.product_title || '',
-                        variant_title: product.variant_title || '',
-                      }}
+                    <ProductTitleTranslation
+                      productTitle={product.product_title || ''}
+                      variantTitle={product.variant_title || ''}
                     />
                   </p>
                   <p>
-                    <span className="product-info-price" dangerouslySetInnerHTML={{
-                      __html: formatMoney(product.price)}} />
+                    <span
+                      className="product-info-price"
+                      dangerouslySetInnerHTML={{ __html: formatMoney(price, currencyFormat) }}
+                    />
                   </p>
                   <p>
                     <Translation
@@ -170,6 +173,7 @@ OrderProductSwap.propTypes = {
   }),
   toggleSwap: PropTypes.func.isRequired,
   swapProductsReceived: PropTypes.bool,
+  allowMulticurrencyDisplay: PropTypes.bool.isRequired,
 };
 
 OrderProductSwap.defaultProps = {
@@ -187,6 +191,7 @@ const mapStateToProps = (state, ownProps) => ({
   swapProductsReceived: state.userInterface.swapProductsReceived ?
     state.userInterface.swapProductsReceived[ownProps.productId] :
     null,
+  allowMulticurrencyDisplay: state.data.general_settings.allow_multicurrency_display,
 });
 
 export default connect(mapStateToProps)(OrderProductSwap);

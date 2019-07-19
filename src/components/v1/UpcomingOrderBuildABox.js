@@ -8,6 +8,7 @@ import Translation from '../Translation';
 import * as UpcomingOrderBuildABoxStates from '../../constants/UpcomingOrderBuildABoxStates';
 import SkipResumeButton from './SkipResumeButton';
 import { ORDER_PROP_TYPE } from '../../constants/PropTypes';
+import formatMoney from '../../helpers/moneyFormatHelpers';
 
 class UpcomingOrderBuildABox extends Component {
   getProductAndVariantTitles() {
@@ -30,14 +31,52 @@ class UpcomingOrderBuildABox extends Component {
       if (handler && handler.shopify_data && handler.shopify_data.title
         && handler.shopify_data.variants) {
         newProduct.product_title = handler.shopify_data.title;
-        newProduct.variant_title = handler.shopify_data.variants
-          .find(variant => variant.id === choice.variant_id).title;
+        let newProductVariantTitle = '';
+        let newProductVariantPrice = '';
+        const newProductVariant = handler.shopify_data.variants
+          .find(variant => variant.id === choice.variant_id);
+        if (newProductVariant && newProductVariant.title && newProductVariant.price) {
+          newProductVariantTitle = newProductVariant.title;
+          newProductVariantPrice = newProductVariant.price;
+        }
+        newProduct.variant_title = newProductVariantTitle;
+        newProduct.price = newProductVariantPrice;
       } else {
         newProduct.product_title = '';
         newProduct.variant_title = '';
+        newProduct.price = '';
       }
       return newProduct;
     });
+  }
+
+  getProductPrices(exchangeRate, currencyFormat) {
+    const { order, buildABoxNextOrders, products } = this.props;
+    const productLookup = {};
+    products.forEach((product) => {
+      productLookup[product.product_id] = product;
+    });
+    const individualPrices = buildABoxNextOrders.choices.filter(choice => (choice.quantity > 0))
+      .map((choice) => {
+        const handler = productLookup[choice.product_id];
+        if (handler && handler.shopify_data && handler.shopify_data.variants) {
+          const choiceVariant = handler.shopify_data.variants
+            .find(variant => variant.id === choice.variant_id);
+          if (choiceVariant && choiceVariant.price) {
+            return (Number(choiceVariant.price) * Number(choice.quantity));
+          }
+        }
+        return 0;
+      });
+    let total = 0;
+    if (order.is_price_based_on_choices) {
+      individualPrices.forEach((subtotal) => {
+        total = Number(total) + Number(subtotal);
+      });
+    } else {
+      total = Number(order.order_products[0].price);
+    }
+    return (<span> { formatMoney((total * exchangeRate).toFixed(2), currencyFormat) } </span>);
   }
 
   getProductImages() {
@@ -87,6 +126,11 @@ class UpcomingOrderBuildABox extends Component {
 
   render() {
     const { order, date, buildABoxNextOrders } = this.props;
+    const exchangeRate = [0, 1, '', null].indexOf(order.currency_exchange_rate) === -1 ? order.currency_exchange_rate : 1;
+    const currencyFormat = order.currency_format;
+    const displayPrice = !order.build_a_box
+        || (order.build_a_box === true && order.is_price_based_on_choices === true);
+
     return (
       <div className="upcoming-order">
         <div className="flex-column flex-column-quarter">
@@ -109,7 +153,13 @@ class UpcomingOrderBuildABox extends Component {
                     <ProductList
                       products={this.getProductAndVariantTitles()}
                       headingTextKey="upcoming_build_a_box_selection_heading"
+                      currencyFormat={currencyFormat}
+                      displayPrice={displayPrice}
                     />
+                    <div className="subscription-details-block">
+                      <p><Translation textKey="upcoming_order_subtotal_heading" /></p>
+                      { this.getProductPrices(exchangeRate, currencyFormat) }
+                    </div>
                     { this.editOrMakeSelection() }
                   </div>
                 </div>

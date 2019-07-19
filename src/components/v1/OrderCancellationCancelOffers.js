@@ -34,7 +34,9 @@ class OrderCancellationCancelOffers extends Component {
   constructor(props) {
     super(props);
 
-    const numOffers = this.props.cancelReason.cancel_offers ? this.props.cancelReason.cancel_offers.length : 0;
+    const numOffers = this.props.cancelReason.cancel_offers
+      ? this.props.cancelReason.cancel_offers.length
+      : 0;
 
     this.state = {
       offerSelectedOption: '0',
@@ -72,6 +74,8 @@ class OrderCancellationCancelOffers extends Component {
   }
 
   toggleConfirmingCancellation() {
+    const { cancelReason, order } = this.props;
+    this.props.saveAttemptedCancellation(order.id, cancelReason.id);
     this.setState({
       confirmingCancellation: !this.state.confirmingCancellation,
     });
@@ -101,6 +105,7 @@ class OrderCancellationCancelOffers extends Component {
         currIncentiveType: currCancelOffer.offer_type,
       });
     }
+    this.props.saveAttemptedCancellation(order.id, cancelReason.cancel_reason);
   }
 
   showSavedPage() {
@@ -371,6 +376,7 @@ OrderCancellationCancelOffers.propTypes = {
   dismissCancelOrderMessage: PropTypes.func,
   getSwapProducts: PropTypes.func.isRequired,
   exitCancelOffer: PropTypes.func.isRequired,
+  saveAttemptedCancellation: PropTypes.func.isRequired,
 };
 
 OrderCancellationCancelOffers.defaultProps = {
@@ -402,6 +408,9 @@ const mapDispatchToProps = dispatch => ({
   },
   getSwapProducts: (orderId, productId, groupId) => {
     dispatch(actions.orderProductGetSwap(orderId, productId, groupId));
+  },
+  saveAttemptedCancellation: (orderId, cancelReason) => {
+    dispatch(actions.orderAttemptedCancellation(orderId, cancelReason));
   },
 });
 

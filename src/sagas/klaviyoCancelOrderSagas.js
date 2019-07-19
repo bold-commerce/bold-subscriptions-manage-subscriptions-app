@@ -45,15 +45,15 @@ export function* klaviyoCancelOrder(action) {
     [VARIANT_TITLES_KEY]: [],
   });
 
-  _learnq.push(['identify', { '$email': order.customer_email }]);
+  _learnq.push(['identify', { $email: order.customer_email }]);
   _learnq.push([
     'track',
     'Canceled Subscription',
     {
-      'Email': order.customer_email,
+      Email: order.customer_email,
       'Cancel Reason': cancelReason,
       ...variantData,
-    }
+    },
   ]);
 
   yield put(actions.klaviyoCancelledOrder());

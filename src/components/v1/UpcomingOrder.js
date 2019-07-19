@@ -23,6 +23,8 @@ class UpcomingOrder extends Component {
 
   render() {
     const { order, date } = this.props;
+    const displayPrice = !order.build_a_box
+        || (order.build_a_box === true && order.is_price_based_on_choices === true);
     return (
       <div className="upcoming-order">
         <div className="flex-column flex-column-quarter">
@@ -43,6 +45,8 @@ class UpcomingOrder extends Component {
                   order.order_product_exceptions.find(exception => exception.date === date).products
                     : order.order_products
                 }
+                displayPrice={displayPrice}
+                currencyFormat={order.currency_format}
               />
             </div>
             <div className="flex-column align-right">

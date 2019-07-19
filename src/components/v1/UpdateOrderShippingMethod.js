@@ -11,8 +11,9 @@ import Message from './Message';
 import { ORDER_PROP_TYPE } from '../../constants/PropTypes';
 
 class UpdateOrderShippingMethod extends Component {
-  static showShippingSource(rate) {
-    const price = `${formatMoney(`${rate.price}`)}`;
+  static showShippingSource(rate, exchangeRateValue, currencyFormat) {
+    const exchangeRate = [0, 1, '', null].indexOf(exchangeRateValue) === -1 ? exchangeRateValue : 1;
+    const price = formatMoney(rate.price * exchangeRate * 100, currencyFormat);
 
     if (!rate.source ||
       rate.source === 'bold' ||
@@ -106,7 +107,7 @@ class UpdateOrderShippingMethod extends Component {
   getShippingRateOptions() {
     return this.props.shippingRates.length > 0 ?
       this.props.shippingRates.map(rate => ({
-        name: UpdateOrderShippingMethod.showShippingSource(rate), value: rate.hash,
+        name: UpdateOrderShippingMethod.showShippingSource(rate, this.props.order.currency_exchange_rate, this.props.order.currency_format), value: rate.hash,
       }))
       :
       [];
