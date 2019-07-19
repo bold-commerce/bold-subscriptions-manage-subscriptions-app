@@ -36,6 +36,7 @@ export const ORDER_PROP_TYPE = PropTypes.shape({
   tax_shipping: PropTypes.number.isRequired,
   attributes: PropTypes.string,
   is_cancellable: PropTypes.bool.isRequired,
+  is_paused: PropTypes.bool.isRequired,
   cancel_reason: PropTypes.string,
   reactivatable: PropTypes.bool.isRequired,
   next_active_ship_date: PropTypes.string,
@@ -66,13 +67,22 @@ export const ORDER_PROP_TYPE = PropTypes.shape({
     hash: PropTypes.string.isRequired,
   }),
   order_logs: PropTypes.arrayOf(PropTypes.shape({})),
-  order_exceptions: PropTypes.arrayOf(PropTypes.shape({})),
+  order_exceptions: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.shape({})),
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
   next_orders: PropTypes.arrayOf(PropTypes.string),
-  order_product_exceptions: PropTypes.arrayOf(PropTypes.string),
+  order_product_exceptions: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.shape({})),
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
   order_hooks: PropTypes.arrayOf(PropTypes.shape({
     title: PropTypes.string,
   })).isRequired,
   build_a_box: PropTypes.bool.isRequired,
+  is_price_based_on_choices: PropTypes.bool.isRequired,
+  currency_exchange_rate: PropTypes.string,
+  currency_format: PropTypes.string,
 });
 
 export const PRODUCT_PROP_TYPE = PropTypes.shape({

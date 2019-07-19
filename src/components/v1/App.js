@@ -13,7 +13,6 @@ import LoadingSpinner from './LoadingSpinner';
 import { REDIRECT_TO_LOGIN_DELAY } from '../../constants';
 
 class App extends Component {
-
   static renderCustomerError() {
     return (
       <React.Fragment>

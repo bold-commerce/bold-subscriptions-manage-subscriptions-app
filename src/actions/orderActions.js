@@ -174,6 +174,44 @@ export const orderProductSaveSwapConflict = orderId => ({
   payload: { orderId },
 });
 
+
+export const orderPauseSubscription = orderId => ({
+  type: types.ORDER_PAUSE_SUBSCRIPTION,
+  payload: { orderId },
+});
+
+export const orderPausedSubscription = data => ({
+  type: types.ORDER_PAUSED_SUBSCRIPTION,
+  payload: data,
+});
+
+export const orderPausingSubscription = () => ({
+  type: types.ORDER_PAUSING_SUBSCRIPTION,
+});
+
+export const orderPauseSubscriptionFailed = () => ({
+  type: types.ORDER_PAUSE_SUBSCRIPTION_FAILED,
+});
+
+
+export const orderResumeSubscription = orderId => ({
+  type: types.ORDER_RESUME_SUBSCRIPTION,
+  payload: { orderId },
+});
+
+export const orderResumedSubscription = data => ({
+  type: types.ORDER_RESUMED_SUBSCRIPTION,
+  payload: data,
+});
+
+export const orderResumingSubscription = () => ({
+  type: types.ORDER_RESUMING_SUBSCRIPTION,
+});
+
+export const orderResumeSubscriptionFailed = () => ({
+  type: types.ORDER_RESUME_SUBSCRIPTION_FAILED,
+});
+
 export const orderSkipOrder = (orderId, date) => ({
   type: types.ORDER_SKIP_ORDER,
   payload: { orderId, date },
@@ -437,4 +475,9 @@ export const appliedCancelDiscount = data => ({
 export const applyCancelDiscountFailed = (orderId, message) => ({
   type: types.ORDER_APPLY_CANCEL_DISCOUNT_FAILED,
   payload: { orderId, message },
+});
+
+export const orderAttemptedCancellation = (orderId, cancelReason) => ({
+  type: types.ORDER_ATTEMPTED_CANCEL_LOG,
+  payload: { orderId, cancelReason },
 });

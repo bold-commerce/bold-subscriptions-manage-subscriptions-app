@@ -23,6 +23,7 @@ class OrderCancellationBlock extends Component {
     this.dismissMessage = this.dismissMessage.bind(this);
     this.cancelWarning = this.cancelWarning.bind(this);
     this.toggleConfirmingCancellation = this.toggleConfirmingCancellation.bind(this);
+    this.confirmKeepSubscription = this.confirmKeepSubscription.bind(this);
   }
 
   cancelWarning() {
@@ -77,6 +78,13 @@ class OrderCancellationBlock extends Component {
     });
   }
 
+  confirmKeepSubscription() {
+    this.props.saveAttemptedCancellation(this.props.order.id, 'No Reason');
+    this.setState({
+      confirmingCancellation: !this.state.confirmingCancellation,
+    });
+  }
+
   dismissMessage() {
     this.props.dismissCancelOrderMessage(this.props.order.id);
   }
@@ -110,7 +118,7 @@ class OrderCancellationBlock extends Component {
           <ButtonGroup>
             <Button
               textKey="cancel_block_confirm_cancel"
-              onClick={this.toggleConfirmingCancellation}
+              onClick={this.confirmKeepSubscription}
             />
             <OrderCancelButton orderId={order.id} />
           </ButtonGroup>
@@ -159,6 +167,7 @@ OrderCancellationBlock.propTypes = {
   cancelMode: PropTypes.string.isRequired,
   cancelInfo: PropTypes.string,
   dismissCancelOrderMessage: PropTypes.func,
+  saveAttemptedCancellation: PropTypes.func.isRequired,
   cancelOrderMessage: MESSAGE_PROP_TYPE,
 };
 
@@ -178,6 +187,9 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = dispatch => ({
   dismissCancelOrderMessage: (orderId) => {
     dispatch(actions.dismissCancelOrderMessage(orderId));
+  },
+  saveAttemptedCancellation: (orderId, cancelReason) => {
+    dispatch(actions.orderAttemptedCancellation(orderId, cancelReason));
   },
 });
 

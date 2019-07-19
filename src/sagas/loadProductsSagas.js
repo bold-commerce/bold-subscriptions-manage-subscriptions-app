@@ -13,8 +13,8 @@ export function* loadProduct(product) {
     yield put(actions.loadedProduct(productData.product));
   } else {
     const hiddenProductData = yield call(
-        requestHelpers.apiGetRequest,
-        `product/${product.product_id}/hidden_product`
+      requestHelpers.apiGetRequest,
+      `product/${product.product_id}/hidden_product`,
     );
     yield put(actions.loadedProduct(hiddenProductData.data));
   }

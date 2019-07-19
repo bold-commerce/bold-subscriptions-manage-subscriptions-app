@@ -12,6 +12,7 @@ import formatMoney from '../../helpers/moneyFormatHelpers';
 import { safeParseJson } from '../../helpers/validationHelpers';
 import ButtonGroup from './ButtonGroup';
 import { ORDER_PROP_TYPE, MESSAGE_PROP_TYPE, PRODUCT_PROP_TYPE } from '../../constants/PropTypes';
+import ProductTitleTranslation from './ProductTitleTranslation';
 
 class OrderProduct extends Component {
   constructor(props) {
@@ -135,12 +136,9 @@ class OrderProduct extends Component {
     if (product.variant_title) {
       return (
         <p>
-          <Translation
-            textKey="product_with_variant_title"
-            mergeFields={{
-              product_title: product.product_title || '',
-              variant_title: product.variant_title || '',
-            }}
+          <ProductTitleTranslation
+            productTitle={product.product_title || ''}
+            variantTitle={product.variant_title || ''}
           />
         </p>
       );
@@ -178,10 +176,13 @@ class OrderProduct extends Component {
 
   render() {
     const {
-      order, product, group, productRemoveMessage,
+      order, product, group, productRemoveMessage, allowMulticurrencyDisplay,
     } = this.props;
-
     let removeButtons;
+    const exchangeRate = [0, 1, '', null].indexOf(order.currency_exchange_rate) === -1 && allowMulticurrencyDisplay ? order.currency_exchange_rate : 1;
+    const currencyFormat = !allowMulticurrencyDisplay ? null : order.currency_format;
+    const price = (exchangeRate * product.price) * 100;
+
     if (order.order_hooks.length > 0) {
       removeButtons = null;
     } else if (!this.state.dismissConflict && productRemoveMessage && productRemoveMessage.type === 'conflict') {
@@ -262,7 +263,7 @@ class OrderProduct extends Component {
                 { this.renderProductTitle() }
                 { this.renderProductProperties() }
                 <p>
-                  <span className="product-info-price" dangerouslySetInnerHTML={{__html: formatMoney(product.price)}} />
+                  <span className="product-info-price" dangerouslySetInnerHTML={{ __html: formatMoney(price, currencyFormat) }} />
                 </p>
                 <p>
                   <Translation
@@ -297,6 +298,7 @@ OrderProduct.propTypes = {
   dismissProductRemoveMessage: PropTypes.func.isRequired,
   dismissGetShippingRatesFailedMessage: PropTypes.func.isRequired,
   disallowedLineItemProperties: PropTypes.arrayOf(PropTypes.string).isRequired,
+  allowMulticurrencyDisplay: PropTypes.bool.isRequired,
 };
 
 OrderProduct.defaultProps = {
@@ -304,6 +306,7 @@ OrderProduct.defaultProps = {
   productRemoveMessage: null,
   getShippingRatesFailedMessage: null,
   group: null,
+  allowMulticurrencyDisplay: 0,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -319,6 +322,7 @@ const mapStateToProps = (state, ownProps) => {
       state.userInterface.getShippingRatesFailedMessage[ownProps.orderId],
     shippingRates: state.userInterface.shippingRates[ownProps.orderId],
     disallowedLineItemProperties: state.data.general_settings.disallowed_line_item_properties,
+    allowMulticurrencyDisplay: state.data.general_settings.allow_multicurrency_display,
   };
 };
 

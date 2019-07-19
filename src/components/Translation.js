@@ -6,7 +6,7 @@ import classnames from 'classnames';
 const loggedMissingTranslations = {};
 
 const Translation = ({ textKey, value }) => (
-  <span className={classnames('ro-translation', `ro-translation-${textKey}`)}>{value}</span>
+  <span className={classnames('ro-translation', `ro-translation-${textKey}`)} dangerouslySetInnerHTML={{ __html: value }} />
 );
 
 Translation.propTypes = {

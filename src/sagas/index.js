@@ -8,6 +8,7 @@ import orderBillingAddressSagas from './orderBillingAddressSagas';
 import orderShippingMethodSagas from './orderShippingMethodSagas';
 import orderFrequencyIntervalSagas from './orderFrequencyIntervalSagas';
 import orderSkipOrderSagas from './orderSkipOrderSagas';
+import orderPauseSubscriptionSagas from './orderPauseSubscriptionSagas';
 import orderProductEditingSagas from './orderProductEditingSagas';
 import orderNextShipDateSagas from './orderNextShipDateSagas';
 import orderProductRemovingSagas from './orderProductRemoveSagas';
@@ -20,6 +21,7 @@ import orderProductEditUpcomingSagas from './orderProductEditUpcomingSagas';
 import orderUpdatePrepaidSettingsSagas from './orderUpdatePrepaidSettingsSagas';
 import orderCancelDiscountSagas from './orderCancelDiscountSagas';
 import klaviyoCancelOrderSagas from './klaviyoCancelOrderSagas';
+import orderAttemptedCancellationSagas from './orderAttemptedCancellationSagas';
 
 export default function* rootSaga() {
   yield all([
@@ -31,6 +33,7 @@ export default function* rootSaga() {
     orderShippingMethodSagas(),
     orderFrequencyIntervalSagas(),
     orderSkipOrderSagas(),
+    orderPauseSubscriptionSagas(),
     orderNextShipDateSagas(),
     orderProductEditingSagas(),
     orderProductRemovingSagas(),
@@ -43,5 +46,6 @@ export default function* rootSaga() {
     orderUpdatePrepaidSettingsSagas(),
     orderCancelDiscountSagas(),
     klaviyoCancelOrderSagas(),
+    orderAttemptedCancellationSagas(),
   ]);
 }

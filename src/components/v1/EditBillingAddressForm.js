@@ -10,6 +10,7 @@ import Translation from '../Translation';
 import * as actions from '../../actions';
 import ButtonGroup from './ButtonGroup';
 import { MESSAGE_PROP_TYPE, ORDER_PROP_TYPE } from '../../constants/PropTypes';
+import { getProvinceOptions, getProvinceName, countryHasProvinces } from '../../helpers/provinceHelpers';
 
 class EditBillingAddressForm extends Component {
   constructor(props) {
@@ -20,6 +21,7 @@ class EditBillingAddressForm extends Component {
     this.state = {
       editing: false,
       selectedCountry: order.billing_country,
+      selectedProvince: order.billing_province,
       updatingBillingAddress: false,
       updateBillingAddressButtonDisabled: true,
       inputErrors: {},
@@ -30,9 +32,7 @@ class EditBillingAddressForm extends Component {
     this.saveBillingAddress = this.saveBillingAddress.bind(this);
     this.checkFields = this.checkFields.bind(this);
     this.dismissMessage = this.dismissMessage.bind(this);
-    this.selectedCountryHasProvinces = this.selectedCountryHasProvinces.bind(this);
     this.selectedCountryZipRequired = this.selectedCountryZipRequired.bind(this);
-    this.getProvinceOptions = this.getProvinceOptions.bind(this);
     this.formElement = null;
   }
 
@@ -67,18 +67,6 @@ class EditBillingAddressForm extends Component {
     }
 
     return countryOptions;
-  }
-
-  getProvinceOptions() {
-    if (!this.selectedCountryHasProvinces()) {
-      return [];
-    }
-
-    return window.Countries[this.state.selectedCountry].provinces.map(p => ({ name: p }));
-  }
-
-  selectedCountryHasProvinces() {
-    return window.Countries[this.state.selectedCountry].provinces !== null;
   }
 
   selectedCountryZipRequired() {
@@ -162,6 +150,10 @@ class EditBillingAddressForm extends Component {
 
   render() {
     const { order, billingMessage } = this.props;
+    const selectedCountryHasProvinces = countryHasProvinces(this.state.selectedCountry);
+    const provinces = getProvinceOptions(this.state.selectedCountry);
+    // eslint-disable-next-line max-len
+    const orderBillingProvince = getProvinceName(this.state.selectedCountry, this.state.selectedProvince);
 
     return this.state.editing ?
       (
@@ -227,11 +219,11 @@ class EditBillingAddressForm extends Component {
               labelTextKey="msp_country"
               onChange={this.billingCountryChange}
             />
-            {this.selectedCountryHasProvinces() ?
+            {selectedCountryHasProvinces ?
               <SelectField
                 name="billing_province"
-                defaultValue={order.billing_province}
-                options={this.getProvinceOptions()}
+                defaultValue={orderBillingProvince}
+                options={provinces}
                 labelTextKey="state_province"
                 onChange={this.checkFields}
               />
@@ -293,7 +285,7 @@ class EditBillingAddressForm extends Component {
             <p>{order.billing_company}</p>
             <p>
               {order.billing_city}
-              {this.selectedCountryHasProvinces() ? ` ${order.billing_province}` : null}
+              {selectedCountryHasProvinces ? ` ${order.billing_province}` : null}
               {this.selectedCountryZipRequired() ? `, ${order.billing_zip}` : null}
             </p>
             <p>{order.billing_country}</p>

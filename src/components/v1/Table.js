@@ -30,8 +30,8 @@ const Table = ({
                 <div
                   className="subscription-responsive-cell-body"
                 >
-                    {typeof col === 'string' ? (
-                        <span dangerouslySetInnerHTML={{__html: col}} />
+                  {typeof col === 'string' ? (
+                    <span dangerouslySetInnerHTML={{ __html: col }} />
                     ) : col}
                 </div>
               </td>
