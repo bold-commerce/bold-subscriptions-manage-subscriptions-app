@@ -109,6 +109,16 @@ class SubscriptionGroupHeader extends Component {
     return null;
   }
 
+  renderAddToExisting() {
+    return (
+        <div className="subscription-details-block">
+          <a className="ro-translation-pause_subscription_button_text add_existing_link" href="https://vitally.com/collections" target="_blank" rel="noopener noreferrer">
+            Add to existing pack
+          </a>
+        </div>
+    );
+  }
+
   render() {
     const { order, allowPauseSubscription } = this.props;
 
@@ -160,6 +170,7 @@ class SubscriptionGroupHeader extends Component {
                   this.renderSubscriptionStatus()
                 }
               </div>
+              { this.renderAddToExisting()}
             </div>
           </div>
           { this.renderOrderHooksWarning() }
