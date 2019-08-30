@@ -15,6 +15,7 @@
 @import 'orderProductRemove';
 @import 'gatewayInput';
 @import 'orderProductSwap';
+@import 'misc/scrollbar';
 
 .text-button {
   cursor: pointer;
@@ -81,13 +82,14 @@
 .no-subscriptions {
   padding: 40px;
   background-color: white;
-  border: 1px solid #ccc;
+  border: 1px solid $borderColor;
   border-radius: 4px;
   text-align: center;
 }
 
 .subscription-container {
-  border: 1px solid #ccc;
+  background-color: $containerColor;
+  border: 1px solid $borderColor;
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 20px;
@@ -164,8 +166,7 @@
 }
 
 .subscription-content-container {
-  background-color: #f2f2f2;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid $borderColor;
 }
 
 .toggle-subscription-content {
@@ -180,18 +181,38 @@
 }
 
 .subscription-content {
-  padding: 16px;
+  background-color: #fff;
+  border-top: 1px solid $borderColor;
   &.altered {
     display: none;
+  }
+
+  .details-sidebar {
+    border-right: 1px solid $borderColor;
+    .sidebar-item {
+      font-size: 23px;
+      color: #5F5F5F;
+      padding: 5px 30px;
+      cursor: pointer;
+      width: 408px;
+      &.selected {
+        background-color: $lightGrey;
+        border-left: 4px solid black;
+        padding-left: 26px;
+      }
+    }
+  }
+
+  .details-content {
+    flex: auto;
+    height: 500px;
+    overflow-y: auto;
   }
 }
 
 .subscription-content-block {
-  border: 1px solid #ccc;
   border-bottom: none;
-  border-radius: 4px;
   background-color: #fff;
-  margin-bottom: 16px;
 }
 
 .subscription-content-block-header {
@@ -199,7 +220,7 @@
   justify-content: space-between;
   padding: 8px 16px;
   background-color: #ddd;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid $borderColor;
   border-radius: 4px;
   & p {
     cursor: pointer;
@@ -217,9 +238,8 @@
 }
 
 .subscription-content-block-body {
-  padding: 16px;
+  padding: 32px;
   background-color: #fff;
-  border-bottom: 1px solid #ccc;
   border-radius: 4px;
   &.altered {
     display: none;

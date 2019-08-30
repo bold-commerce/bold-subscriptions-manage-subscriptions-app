@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 
 import AddressShippingBlock from '../AddressShippingBlock';
 import OrderDiscountBlock from '../OrderDiscountBlock';
@@ -23,14 +24,14 @@ const menuItems = [
     key: 'order_products_title',
     component: OrderProductsBlock,
   },
-  {
-    key: 'upcoming_order_date',
-    component: UpcomingOrdersBlock,
-  },
-  {
-    key: 'order_discount_title',
-    component: OrderDiscountBlock,
-  },
+  // {
+  //   key: 'upcoming_order_date',
+  //   component: UpcomingOrdersBlock,
+  // },
+  // {
+  //   key: 'order_discount_title',
+  //   component: OrderDiscountBlock,
+  // },
   {
     key: 'transaction_history_title',
     component: TransactionHistoryBlock,
@@ -62,21 +63,22 @@ class DetailsLayout extends Component {
 
 	render() {
     const { orderId } = this.props;
+    const { selected } = this.state;
 
     return (
       <div className="subscription-flex">
-        <div className="sidebar">
+        <div className="details-sidebar">
           {menuItems.map((item, id) => (
             <div
               key={id}
-              className="sidebar-item"
+              className={classnames("sidebar-item", selected === id ? 'selected' : '')}
               onClick={this.handleSelectItem(id)}
             >
               <Translation textKey={item.key} />
             </div>
           ))}
         </div>
-        <div className="detail-content">
+        <div className="details-content">
           {this.renderDetail()}
         </div>
       </div>
