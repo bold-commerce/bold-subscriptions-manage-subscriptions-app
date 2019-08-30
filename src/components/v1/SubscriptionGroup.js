@@ -12,6 +12,7 @@ import TransactionHistoryBlock from './TransactionHistoryBlock';
 import Translation from '../Translation';
 import UpcomingOrdersBlock from './UpcomingOrdersBlock';
 import OrderCancellationBlock from './OrderCancellationBlock';
+import SubscriptionDetails from './subscription';
 import { ORDER_PROP_TYPE } from '../../constants/PropTypes';
 import formatMoney from '../../helpers/moneyFormatHelpers';
 
@@ -54,17 +55,18 @@ class SubscriptionGroup extends Component {
               </p>
             </div>
             <div className={classnames('subscription-content', this.state.contentAltered ? '' : 'altered')}>
-              <AddressShippingBlock orderId={order.id} />
-              <PaymentInformationBlock orderId={order.id} />
-              <OrderProductsBlock orderId={order.id} />
-              <UpcomingOrdersBlock orderId={order.id} />
-              <OrderDiscountBlock orderId={order.id} />
-              <TransactionHistoryBlock orderId={order.id} />
-              {
-                (order.is_cancellable) ?
-                  <OrderCancellationBlock orderId={order.id} /> :
-                  null
-              }
+              {/*<AddressShippingBlock orderId={order.id} />
+                            <PaymentInformationBlock orderId={order.id} />
+                            <OrderProductsBlock orderId={order.id} />
+                            <UpcomingOrdersBlock orderId={order.id} />
+                            <OrderDiscountBlock orderId={order.id} />
+                            <TransactionHistoryBlock orderId={order.id} />
+                            {
+                              (order.is_cancellable) ?
+                                <OrderCancellationBlock orderId={order.id} /> :
+                                null
+                            }*/}
+              <SubscriptionDetails orderId={order.id} />
             </div>
           </div>
         }

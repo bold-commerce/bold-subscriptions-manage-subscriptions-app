@@ -50,14 +50,7 @@ class SubscriptionContentBlock extends Component {
   render() {
     return (
       <div className="subscription-content-block">
-        <div className="subscription-content-block-header">
-          <p onClick={this.toggleBody} role="presentation">
-            <Translation textKey={this.props.titleTranslationKey} />
-            <span className={classnames('subscription-content-chevron', this.state.detailsAltered ? 'altered' : '')}>&gt;</span>
-          </p>
-          {this.renderEditTitle()}
-        </div>
-        <div className={classnames('subscription-content-block-body', this.state.detailsAltered ? '' : 'altered')}>
+        <div className="subscription-content-block-body">
           {this.props.children}
         </div>
       </div>
