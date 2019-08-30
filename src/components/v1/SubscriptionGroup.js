@@ -3,18 +3,10 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 
-import AddressShippingBlock from './AddressShippingBlock';
-import OrderDiscountBlock from './OrderDiscountBlock';
-import OrderProductsBlock from './OrderProductsBlock';
-import PaymentInformationBlock from './PaymentInformationBlock';
 import SubscriptionGroupHeader from './SubscriptionGroupHeader';
-import TransactionHistoryBlock from './TransactionHistoryBlock';
 import Translation from '../Translation';
-import UpcomingOrdersBlock from './UpcomingOrdersBlock';
-import OrderCancellationBlock from './OrderCancellationBlock';
 import SubscriptionDetails from './subscription';
 import { ORDER_PROP_TYPE } from '../../constants/PropTypes';
-import formatMoney from '../../helpers/moneyFormatHelpers';
 
 class SubscriptionGroup extends Component {
   constructor(props) {
@@ -55,18 +47,7 @@ class SubscriptionGroup extends Component {
               </p>
             </div>
             <div className={classnames('subscription-content', this.state.contentAltered ? '' : 'altered')}>
-              {/*<AddressShippingBlock orderId={order.id} />
-                            <PaymentInformationBlock orderId={order.id} />
-                            <OrderProductsBlock orderId={order.id} />
-                            <UpcomingOrdersBlock orderId={order.id} />
-                            <OrderDiscountBlock orderId={order.id} />
-                            <TransactionHistoryBlock orderId={order.id} />
-                            {
-                              (order.is_cancellable) ?
-                                <OrderCancellationBlock orderId={order.id} /> :
-                                null
-                            }*/}
-              <SubscriptionDetails orderId={order.id} />
+              <SubscriptionDetails orderId={order.id} cancellable={order.is_cancellable} />
             </div>
           </div>
         }
