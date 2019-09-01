@@ -104,7 +104,7 @@ class DetailsLayout extends Component {
         <div className="subscription-flex">
           <div className="details-sidebar">
             {menuItems
-              .filter(item => !(item.key === 'cancel_block_heading' && !curOrder.cancellable))
+              .filter(item => !(item.key === 'cancel_block_heading' && !curOrder.is_cancellable))
               .map((item, id) => (
                 <div
                   key={id}
