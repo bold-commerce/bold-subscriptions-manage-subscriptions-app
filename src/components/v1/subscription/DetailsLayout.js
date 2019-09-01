@@ -51,11 +51,16 @@ class DetailsLayout extends Component {
     };
 
     this.handleSelectItem = this.handleSelectItem.bind(this);
+    this.handleOrderChange = this.handleOrderChange.bind(this);
     this.renderDetail = this.renderDetail.bind(this);
   }
 
   handleSelectItem(selected) {
     this.setState({ selected });
+  }
+
+  handleOrderChange(e) {
+    this.setState({ selectedOrder: e.target.value });
   }
 
   renderDetail() {
@@ -77,8 +82,19 @@ class DetailsLayout extends Component {
       <div className="subscription-content">
         <div className="subscription-flex topheader">
           <div className="subscription-select-container">
-            <select value={selectedOrder} className="select-box">
-              {orders.map((order, id) => (<option key={id} value={id}>{`Subscription - #${order.id}`}</option>))}
+            <select
+              className="select-box"
+              value={selectedOrder}
+              onChange={this.handleOrderChange}
+            >
+              {orders.map((order, id) => (
+                <option
+                  key={id}
+                  value={id}
+                >
+                  {`Subscription - #${order.id}`}
+                </option>
+              ))}
             </select>
           </div>
           <div className="subscription-title">
@@ -109,7 +125,7 @@ class DetailsLayout extends Component {
 }
 
 DetailsLayout.propTypes = {
-  orders:PropTypes.arrayOf(PropTypes.object).isRequired,
+  orders: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default DetailsLayout;
