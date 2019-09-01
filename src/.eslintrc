@@ -6,7 +6,8 @@
     "react/no-danger": "off",
     "jsx-a11y/click-events-have-key-events": false, 
     "jsx-a11y/no-static-element-interactions": false,
-    "react/no-array-index-key": false
+    "react/no-array-index-key": false,
+    "react/default-props-match-prop-types": false
   },
   "env": {
     "browser": true

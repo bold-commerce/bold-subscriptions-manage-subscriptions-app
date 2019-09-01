@@ -165,10 +165,6 @@
   font-weight: bold;
 }
 
-.subscription-content-container {
-  border-top: 1px solid $borderColor;
-}
-
 .toggle-subscription-content {
   cursor: pointer;
   text-align: center;
@@ -182,9 +178,42 @@
 
 .subscription-content {
   background-color: #fff;
-  border-top: 1px solid $borderColor;
   &.altered {
     display: none;
+  }
+
+  .topheader {
+    height: 100px;
+
+    .subscription-select-container {
+      width: 409px;
+      border: none;
+      border-bottom: 1px solid #ccc;
+      text-align: center;
+      padding: 20px;
+
+      .select-box {
+        width: 100%;
+        margin: auto;
+        height: 50px;
+      }
+    }
+
+    .subscription-title {
+      height: 100px;
+      border-bottom: 1px solid #ccc;
+      text-align: center;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      flex: auto;
+
+      .next-order-date {
+        &__container {
+          font-size: 20px;
+        }
+      }
+    }
   }
 
   .details-sidebar {

@@ -5,7 +5,7 @@ import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 
 import * as actions from '../../actions/index';
-import SubscriptionGroup from './SubscriptionGroup';
+import SubscriptionsContainer from './subscription';
 import ProgressBar from './ProgressBar';
 import Translation from '../Translation';
 import Message from './Message';
@@ -86,16 +86,14 @@ class App extends Component {
     if (this.props.orders.length === 0) {
       return <div className="no-subscriptions"><Translation textKey="no_subscriptions" /></div>;
     }
-    return this.props.orders.map(order => (
-      <SubscriptionGroup key={order.id} orderId={order.id} />
-    ));
+    return (
+      <SubscriptionsContainer orders={this.props.orders} />
+    );
   }
 
   render() {
     return this.props.customerLoggedOutError ? App.renderCustomerError() : (
       <div className="manage-subscription-page">
-        {this.renderGreetingHeader()}
-        <p><Translation textKey="greeting_body" /></p>
         {
           this.state.loading ?
             <ProgressBar

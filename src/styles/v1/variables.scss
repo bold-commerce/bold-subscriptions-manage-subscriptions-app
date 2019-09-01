@@ -8,9 +8,10 @@ $alertColor: hsl($alertHue, 60%, 50%);
 $alertDarker: hsl($alertHue, 60%, 40%);
 
 .manage-subscription-page {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 16px;
+  width: 100%;
+  margin-top: 127px;
+  padding: 50px 100px;
+  background-color: #F6F6F6;
 }
 
 $errorHue: 0;

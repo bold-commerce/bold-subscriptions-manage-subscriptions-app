@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 
 import DetailsLayout from './DetailsLayout';
 
-const SubscriptionDetails = ({ orderId, cancellable }) => (
-  <DetailsLayout orderId={orderId} cancellable={cancellable} />
+const SubscriptionDetails = ({ orders }) => (
+  <div className="subscription-container">
+    <DetailsLayout orders={orders} />
+  </div>
 );
 
 SubscriptionDetails.propTypes = {
-  orderId: PropTypes.number.isRequired,
-  cancellable: PropTypes.bool.isRequired,
+  orders: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default DetailsLayout;

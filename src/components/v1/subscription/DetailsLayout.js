@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+import SubscriptionDetailHeader from './SubscriptionDetailHeader';
 import AddressShippingBlock from '../AddressShippingBlock';
 import OrderProductsBlock from '../OrderProductsBlock';
 import PaymentInformationBlock from '../PaymentInformationBlock';
@@ -46,6 +47,7 @@ class DetailsLayout extends Component {
 
     this.state = {
       selected: 0,
+      selectedOrder: 0,
     };
 
     this.handleSelectItem = this.handleSelectItem.bind(this);
@@ -57,36 +59,49 @@ class DetailsLayout extends Component {
   }
 
   renderDetail() {
-    const { selected } = this.state;
-    const { orderId } = this.props;
+    const { selected, selectedOrder } = this.state;
+    const { orders } = this.props;
     const Comp = menuItems[selected].component;
 
     return (
-      <Comp orderId={orderId} />
+      <Comp orderId={orders[selectedOrder].id} />
     );
   }
 
   render() {
-    const { selected } = this.state;
-    const { cancellable } = this.props;
+    const { selected, selectedOrder } = this.state;
+    const { orders } = this.props;
+    const curOrder = orders[selectedOrder];
 
     return (
-      <div className="subscription-flex">
-        <div className="details-sidebar">
-          {menuItems
-            .filter(item => !(item.key === 'cancel_block_heading' && !cancellable))
-            .map((item, id) => (
-              <div
-                key={id}
-                className={classnames('sidebar-item', selected === id ? 'selected' : '')}
-                onClick={() => this.handleSelectItem(id)}
-              >
-                <Translation textKey={item.key} />
-              </div>
-          ))}
+      <div className="subscription-content">
+        <div className="subscription-flex topheader">
+          <div className="subscription-select-container">
+            <select value={selectedOrder} className="select-box">
+              {orders.map((order, id) => (<option key={id} value={id}>{`Subscription - #${order.id}`}</option>))}
+            </select>
+          </div>
+          <div className="subscription-title">
+            <SubscriptionDetailHeader orderId={curOrder.id} />
+          </div>
         </div>
-        <div className="details-content">
-          {this.renderDetail()}
+        <div className="subscription-flex">
+          <div className="details-sidebar">
+            {menuItems
+              .filter(item => !(item.key === 'cancel_block_heading' && !curOrder.cancellable))
+              .map((item, id) => (
+                <div
+                  key={id}
+                  className={classnames('sidebar-item', selected === id ? 'selected' : '')}
+                  onClick={() => this.handleSelectItem(id)}
+                >
+                  <Translation textKey={item.key} />
+                </div>
+            ))}
+          </div>
+          <div className="details-content">
+            {this.renderDetail()}
+          </div>
         </div>
       </div>
     );
@@ -94,8 +109,7 @@ class DetailsLayout extends Component {
 }
 
 DetailsLayout.propTypes = {
-  orderId: PropTypes.number.isRequired,
-  cancellable: PropTypes.bool.isRequired,
+  orders:PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default DetailsLayout;
