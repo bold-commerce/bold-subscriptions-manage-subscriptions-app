@@ -159,6 +159,9 @@
 .subscription-details-block > p {
   line-height: 1.0em;
   margin-bottom: 5px;
+  &.editable {
+    display: flex;
+  }
 }
 
 .subscription-details-block > p:first-child {

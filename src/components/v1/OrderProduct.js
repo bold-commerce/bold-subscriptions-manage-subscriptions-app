@@ -27,6 +27,7 @@ class OrderProduct extends Component {
 
     this.dismissMessage = this.dismissMessage.bind(this);
     this.toggleSwapOnClick = this.toggleSwapOnClick.bind(this);
+    this.toggleEditingOnClick = this.toggleEditingOnClick.bind(this);
     this.toggleRemoveProduct = this.toggleRemoveProduct.bind(this);
     this.cancelShippingMethod = this.cancelShippingMethod.bind(this);
     this.removeProductOnClick = this.removeProductOnClick.bind(this);
@@ -62,6 +63,10 @@ class OrderProduct extends Component {
       this.props.product.id,
       this.props.product.properties_group_id,
     );
+  }
+
+  toggleEditingOnClick() {
+    this.props.toggleEdit();
   }
 
   toggleRemoveProduct() {
@@ -263,15 +268,25 @@ class OrderProduct extends Component {
                 { this.renderProductTitle() }
                 { this.renderProductProperties() }
                 <p>
-                  <span className="product-info-price" dangerouslySetInnerHTML={{ __html: formatMoney(price, currencyFormat) }} />
+                  <span
+                    className="product-info-price"
+                    dangerouslySetInnerHTML={{ __html: formatMoney(price, currencyFormat) }}
+                  />
                 </p>
-                <p>
+                <p className="editable">
                   <Translation
                     textKey="product_info_quantity"
                     mergeFields={{
                       quantity: product.quantity,
                     }}
                   />
+                  <span onClick={this.toggleEditingOnClick}>
+                    <img
+                      className="edit-btn"
+                      src="https://img.icons8.com/ultraviolet/40/000000/pencil.png"
+                      alt="edit_icon"
+                    />
+                  </span>
                 </p>
               </div>
             </div>
@@ -292,6 +307,7 @@ OrderProduct.propTypes = {
     is_swap_enabled: PropTypes.bool.isRequired,
   }),
   toggleSwap: PropTypes.func,
+  toggleEdit: PropTypes.func,
   removeProduct: PropTypes.func.isRequired,
   productRemoveMessage: MESSAGE_PROP_TYPE,
   getShippingRatesFailedMessage: MESSAGE_PROP_TYPE,
@@ -303,6 +319,7 @@ OrderProduct.propTypes = {
 
 OrderProduct.defaultProps = {
   toggleSwap: null,
+  toggleEdit: null,
   productRemoveMessage: null,
   getShippingRatesFailedMessage: null,
   group: null,

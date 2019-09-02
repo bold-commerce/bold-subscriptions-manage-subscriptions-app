@@ -28,6 +28,18 @@
   }
 }
 
+.edit-btn {
+  width: 19px;
+  margin-left: 10px;
+  cursor: pointer;
+  padding-bottom: 2px;
+
+  &:hover {
+    opacity: 0.7;
+    border-bottom: 1px solid $borderColor;
+  }
+}
+
 .subscription-button {
   margin-bottom: 5px;
   .subscription-loading-icon {
