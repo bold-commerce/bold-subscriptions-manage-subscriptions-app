@@ -29,6 +29,7 @@ class OrderProduct extends Component {
     this.toggleSwapOnClick = this.toggleSwapOnClick.bind(this);
     this.toggleEditingOnClick = this.toggleEditingOnClick.bind(this);
     this.toggleRemoveProduct = this.toggleRemoveProduct.bind(this);
+    this.toggleEditingFrequencyOnClick = this.toggleEditingFrequencyOnClick.bind(this);
     this.cancelShippingMethod = this.cancelShippingMethod.bind(this);
     this.removeProductOnClick = this.removeProductOnClick.bind(this);
     this.removeProductFromShippingMethod = this.removeProductFromShippingMethod.bind(this);
@@ -67,6 +68,10 @@ class OrderProduct extends Component {
 
   toggleEditingOnClick() {
     this.props.toggleEdit();
+  }
+
+  toggleEditingFrequencyOnClick() {
+    this.props.toggleEditFrequency();
   }
 
   toggleRemoveProduct() {
@@ -170,6 +175,15 @@ class OrderProduct extends Component {
           return (
             <p key={`${order.id}-${product.id}-${property[0]}`} >
               {property[0]}: {property[1]}
+              {property[0] === 'delivery_frequency' && (
+                <span onClick={this.toggleEditingFrequencyOnClick}>
+                  <img
+                    className="edit-btn"
+                    src="https://img.icons8.com/ultraviolet/40/000000/pencil.png"
+                    alt="edit_icon"
+                  />
+                </span>
+              )}
             </p>
           );
         }
@@ -308,6 +322,7 @@ OrderProduct.propTypes = {
   }),
   toggleSwap: PropTypes.func,
   toggleEdit: PropTypes.func,
+  toggleEditFrequency: PropTypes.func,
   removeProduct: PropTypes.func.isRequired,
   productRemoveMessage: MESSAGE_PROP_TYPE,
   getShippingRatesFailedMessage: MESSAGE_PROP_TYPE,
@@ -320,6 +335,7 @@ OrderProduct.propTypes = {
 OrderProduct.defaultProps = {
   toggleSwap: null,
   toggleEdit: null,
+  toggleEditFrequency: null,
   productRemoveMessage: null,
   getShippingRatesFailedMessage: null,
   group: null,

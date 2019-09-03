@@ -9,6 +9,7 @@ import OrderProducts from './OrderProducts';
 import OrderProductEditQuantityBlock from './OrderProductEditQuantityBlock';
 import Message from './Message';
 import { ORDER_PROP_TYPE, MESSAGE_PROP_TYPE } from '../../constants/PropTypes';
+import OrderFrequencyBlock from './OrderFrequencyBlock';
 
 class OrderProductsBlock extends Component {
   constructor(props) {
@@ -16,12 +17,14 @@ class OrderProductsBlock extends Component {
 
     this.state = {
       editingQuantity: false,
+      editingFrequency: false,
       swapping: false,
       productId: null,
       groupId: null,
     };
 
     this.toggleEditing = this.toggleEditing.bind(this);
+    this.toggleEditingFrequency = this.toggleEditingFrequency.bind(this);
     this.toggleSwap = this.toggleSwap.bind(this);
     this.dismissMessage = this.dismissMessage.bind(this);
   }
@@ -45,6 +48,12 @@ class OrderProductsBlock extends Component {
     if (!this.state.editingQuantity) {
       this.dismissMessage();
     }
+  }
+
+  toggleEditingFrequency() {
+    this.setState({
+      editingFrequency: !this.state.editingFrequency,
+    });
   }
 
   dismissMessage() {
@@ -76,12 +85,20 @@ class OrderProductsBlock extends Component {
           toggleEdit={this.toggleEditing}
         />
       );
+    } else if (this.state.editingFrequency) {
+      productList = (
+        <OrderFrequencyBlock
+          orderId={order.id}
+          toggleEdit={this.toggleEditingFrequency}
+        />
+      );
     } else {
       productList = (
         <OrderProducts
           orderId={order.id}
           toggleSwap={this.toggleSwap}
           toggleEdit={this.toggleEditing}
+          toggleEditFrequency={this.toggleEditingFrequency}
         />
       );
     }

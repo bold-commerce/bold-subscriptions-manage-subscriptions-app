@@ -27,7 +27,7 @@ class OrderFrequencyBlock extends Component {
     this.matchIntervalType = this.matchIntervalType.bind(this);
 
     this.state = {
-      editing: false,
+      editing: true,
       selectedFrequency: order.interval_number,
       selectedInterval: this.matchIntervalType(order.interval_type_id),
       updatingFrequencyInterval: false,
@@ -37,7 +37,7 @@ class OrderFrequencyBlock extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.frequencyIntervalMessage) {
-      this.disableEditing();
+      this.props.toggleEdit();
       this.setState({
         updatingFrequencyInterval: false,
       });
@@ -231,11 +231,13 @@ OrderFrequencyBlock.propTypes = {
   frequencyIntervalMessage: MESSAGE_PROP_TYPE,
   order: ORDER_PROP_TYPE.isRequired,
   group: PropTypes.shape({}).isRequired,
+  toggleEdit: PropTypes.func,
   updateFrequencyInterval: PropTypes.func.isRequired,
 };
 
 OrderFrequencyBlock.defaultProps = {
   frequencyIntervalMessage: null,
+  toggleEdit: null,
 };
 
 const mapStateToProps = (state, ownProps) => ({

@@ -48,6 +48,7 @@ class OrderProducts extends Component {
               key={`${order.id}-prod-${d.id}`}
               toggleSwap={this.props.toggleSwap}
               toggleEdit={this.props.toggleEdit}
+              toggleEditFrequency={this.props.toggleEditFrequency}
               productId={d.id}
               orderId={order.id}
             />
@@ -61,6 +62,7 @@ OrderProducts.propTypes = {
   order: ORDER_PROP_TYPE.isRequired,
   toggleSwap: PropTypes.func,
   toggleEdit: PropTypes.func,
+  toggleEditFrequency: PropTypes.func,
   dismissGetShippingRatesFailedMessage: PropTypes.func.isRequired,
   getShippingRatesFailedMessage: MESSAGE_PROP_TYPE,
 };
@@ -68,6 +70,7 @@ OrderProducts.propTypes = {
 OrderProducts.defaultProps = {
   toggleSwap: null,
   toggleEdit: null,
+  toggleEditFrequency: null,
   getShippingRatesFailedMessage: null,
 };
 
