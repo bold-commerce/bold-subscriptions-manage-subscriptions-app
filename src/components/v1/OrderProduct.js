@@ -8,7 +8,6 @@ import ProductImages from './ProductImages';
 import UpdateOrderShippingMethod from './UpdateOrderShippingMethod';
 import Button from './Button';
 import Translation from '../Translation';
-import formatMoney from '../../helpers/moneyFormatHelpers';
 import { safeParseJson } from '../../helpers/validationHelpers';
 import ButtonGroup from './ButtonGroup';
 import { ORDER_PROP_TYPE, MESSAGE_PROP_TYPE, PRODUCT_PROP_TYPE } from '../../constants/PropTypes';
@@ -27,9 +26,7 @@ class OrderProduct extends Component {
 
     this.dismissMessage = this.dismissMessage.bind(this);
     this.toggleSwapOnClick = this.toggleSwapOnClick.bind(this);
-    this.toggleEditingOnClick = this.toggleEditingOnClick.bind(this);
     this.toggleRemoveProduct = this.toggleRemoveProduct.bind(this);
-    this.toggleEditingFrequencyOnClick = this.toggleEditingFrequencyOnClick.bind(this);
     this.cancelShippingMethod = this.cancelShippingMethod.bind(this);
     this.removeProductOnClick = this.removeProductOnClick.bind(this);
     this.removeProductFromShippingMethod = this.removeProductFromShippingMethod.bind(this);
@@ -64,14 +61,6 @@ class OrderProduct extends Component {
       this.props.product.id,
       this.props.product.properties_group_id,
     );
-  }
-
-  toggleEditingOnClick() {
-    this.props.toggleEdit();
-  }
-
-  toggleEditingFrequencyOnClick() {
-    this.props.toggleEditFrequency();
   }
 
   toggleRemoveProduct() {
@@ -167,11 +156,14 @@ class OrderProduct extends Component {
 
   renderProductProperties() {
     const { disallowedLineItemProperties, product, order } = this.props;
+    const disallowedProperties = disallowedLineItemProperties.slice();
+
+    disallowedProperties.push(...['delivery_frequency', 'jsonData']);
     const lineItemProperties = product.properties !== null
       && safeParseJson(product.properties);
     if (lineItemProperties) {
       return Object.entries(lineItemProperties).map((property) => {
-        if (!disallowedLineItemProperties.includes(property[0]) && property[0].charAt(0) !== '_' && typeof property[1] === 'string') {
+        if (!disallowedProperties.includes(property[0]) && property[0].charAt(0) !== '_' && typeof property[1] === 'string') {
           return (
             <p key={`${order.id}-${product.id}-${property[0]}`} >
               {property[0]}: {property[1]}
@@ -195,12 +187,9 @@ class OrderProduct extends Component {
 
   render() {
     const {
-      order, product, group, productRemoveMessage, allowMulticurrencyDisplay,
+      order, product, group, productRemoveMessage,
     } = this.props;
     let removeButtons;
-    const exchangeRate = [0, 1, '', null].indexOf(order.currency_exchange_rate) === -1 && allowMulticurrencyDisplay ? order.currency_exchange_rate : 1;
-    const currencyFormat = !allowMulticurrencyDisplay ? null : order.currency_format;
-    const price = (exchangeRate * product.price) * 100;
 
     if (order.order_hooks.length > 0) {
       removeButtons = null;
@@ -281,27 +270,6 @@ class OrderProduct extends Component {
               <div className="subscription-details-block">
                 { this.renderProductTitle() }
                 { this.renderProductProperties() }
-                <p>
-                  <span
-                    className="product-info-price"
-                    dangerouslySetInnerHTML={{ __html: formatMoney(price, currencyFormat) }}
-                  />
-                </p>
-                <p className="editable">
-                  <Translation
-                    textKey="product_info_quantity"
-                    mergeFields={{
-                      quantity: product.quantity,
-                    }}
-                  />
-                  <span onClick={this.toggleEditingOnClick}>
-                    <img
-                      className="edit-btn"
-                      src="https://img.icons8.com/ultraviolet/40/000000/pencil.png"
-                      alt="edit_icon"
-                    />
-                  </span>
-                </p>
               </div>
             </div>
             {removeButtons}
@@ -321,15 +289,12 @@ OrderProduct.propTypes = {
     is_swap_enabled: PropTypes.bool.isRequired,
   }),
   toggleSwap: PropTypes.func,
-  toggleEdit: PropTypes.func,
-  toggleEditFrequency: PropTypes.func,
   removeProduct: PropTypes.func.isRequired,
   productRemoveMessage: MESSAGE_PROP_TYPE,
   getShippingRatesFailedMessage: MESSAGE_PROP_TYPE,
   dismissProductRemoveMessage: PropTypes.func.isRequired,
   dismissGetShippingRatesFailedMessage: PropTypes.func.isRequired,
   disallowedLineItemProperties: PropTypes.arrayOf(PropTypes.string).isRequired,
-  allowMulticurrencyDisplay: PropTypes.bool.isRequired,
 };
 
 OrderProduct.defaultProps = {

@@ -6,25 +6,19 @@ import * as actions from '../../actions';
 import SubscriptionContentBlock from './SubscriptionContentBlock';
 import OrderProductSwap from './OrderProductSwap';
 import OrderProducts from './OrderProducts';
-import OrderProductEditQuantityBlock from './OrderProductEditQuantityBlock';
 import Message from './Message';
 import { ORDER_PROP_TYPE, MESSAGE_PROP_TYPE } from '../../constants/PropTypes';
-import OrderFrequencyBlock from './OrderFrequencyBlock';
 
 class OrderProductsBlock extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      editingQuantity: false,
-      editingFrequency: false,
       swapping: false,
       productId: null,
       groupId: null,
     };
 
-    this.toggleEditing = this.toggleEditing.bind(this);
-    this.toggleEditingFrequency = this.toggleEditingFrequency.bind(this);
     this.toggleSwap = this.toggleSwap.bind(this);
     this.dismissMessage = this.dismissMessage.bind(this);
   }
@@ -38,21 +32,6 @@ class OrderProductsBlock extends Component {
       swapping: !this.state.swapping,
       productId,
       groupId,
-    });
-  }
-
-  toggleEditing() {
-    this.setState({
-      editingQuantity: !this.state.editingQuantity,
-    });
-    if (!this.state.editingQuantity) {
-      this.dismissMessage();
-    }
-  }
-
-  toggleEditingFrequency() {
-    this.setState({
-      editingFrequency: !this.state.editingFrequency,
     });
   }
 
@@ -76,20 +55,6 @@ class OrderProductsBlock extends Component {
           productId={this.state.productId}
           groupId={this.state.groupId}
           toggleSwap={this.toggleSwap}
-        />
-      );
-    } else if (this.state.editingQuantity) {
-      productList = (
-        <OrderProductEditQuantityBlock
-          orderId={order.id}
-          toggleEdit={this.toggleEditing}
-        />
-      );
-    } else if (this.state.editingFrequency) {
-      productList = (
-        <OrderFrequencyBlock
-          orderId={order.id}
-          toggleEdit={this.toggleEditingFrequency}
         />
       );
     } else {
