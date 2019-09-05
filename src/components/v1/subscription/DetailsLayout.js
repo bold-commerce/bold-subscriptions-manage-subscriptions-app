@@ -101,6 +101,25 @@ class DetailsLayout extends Component {
             <SubscriptionDetailHeader orderId={curOrder.id} />
           </div>
         </div>
+
+        <div className="section-items-mobile">
+          <select
+            className="select-box"
+            onChange={e => this.handleSelectItem(e.target.value)}
+          >
+            {menuItems
+              .filter(item => !(item.key === 'cancel_block_heading' && !curOrder.is_cancellable))
+              .map((item, id) => (
+                <option
+                  key={id}
+                  value={id}
+                >
+                  <Translation textKey={item.key} />
+                </option>
+            ))}
+          </select>
+        </div>
+
         <div className="subscription-flex">
           <div className="details-sidebar">
             {menuItems

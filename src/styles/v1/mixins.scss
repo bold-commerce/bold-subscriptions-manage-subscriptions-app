@@ -14,3 +14,19 @@
     width: 100%;
   }
 }
+
+@mixin selectBox() {
+  border: none;
+  border-bottom: 1px solid $borderColor;
+  text-align: center;
+  padding: 20px;
+
+  .select-box {
+    width: 100%;
+    margin: auto;
+    height: 50px;
+    border-color: $borderColor;
+    font-size: 20px;
+    color: #5F5F5F;
+  }
+}

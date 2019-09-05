@@ -190,20 +190,8 @@
 
     .subscription-select-container {
       width: 409px;
-      border: none;
-      border-bottom: 1px solid $borderColor;
-      text-align: center;
-      padding: 20px;
       display: flex;
-
-      .select-box {
-        width: 100%;
-        margin: auto;
-        height: 50px;
-        border-color: $borderColor;
-        font-size: 20px;
-        color: #5F5F5F;
-      }
+      @include selectBox();
     }
 
     .subscription-title {
@@ -236,6 +224,15 @@
         border-left: 4px solid black;
         padding-left: 26px;
       }
+    }
+  }
+
+  .section-items-mobile {
+    @include selectBox();
+    display: none;
+    .select-box {
+      height: 40px;
+      font-size: 16px;
     }
   }
 
@@ -324,5 +321,45 @@
   }
   .subscription-container {
     overflow: visible;
+  }
+}
+
+@media (max-width: 415px) {
+  .subscription-content {
+    .topheader {
+      flex-wrap: wrap;
+      height: fit-content;
+      & > div {
+        width: 100%;
+      }
+    }
+    .section-items-mobile {
+      display: flex;
+    }
+    .subscription-flex {
+      .details-sidebar {
+        display: none;
+      }
+    }
+    .subscription-content-block-body {
+      padding: 16px;
+    }
+  }
+}
+
+@media (max-width: 375px) {
+  .detail-content-header {
+    font-size: 20px;
+    .subscription-content {
+      .subscription-flex {
+        .topheader {
+          .subscription-title {
+            .next-order-date__container {
+              font-size: 16px;
+            }
+          }
+        }
+      }
+    }
   }
 }
