@@ -31,7 +31,7 @@ class NextShipDateBlock extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.updateNextShipDateMessage) {
+    if (nextProps.updateNextShipDateMessage || nextProps.orderId !== this.props.orderId) {
       this.disableEditing();
       this.setState({
         updatingNextShipDate: false,
@@ -167,6 +167,7 @@ NextShipDateBlock.propTypes = {
   updateNextShipDateMessage: MESSAGE_PROP_TYPE,
   order: ORDER_PROP_TYPE.isRequired,
   allowChangeShippingDate: PropTypes.bool.isRequired,
+  orderId: PropTypes.number.isRequired,
 };
 
 NextShipDateBlock.defaultProps = {
