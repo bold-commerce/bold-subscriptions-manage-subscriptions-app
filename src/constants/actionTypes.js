@@ -132,6 +132,9 @@ export const ORDER_UPDATE_NEXT_SHIP_DATE = 'Order/UpdateNextShipDate';
 export const ORDER_UPDATE_NEXT_SHIP_DATE_FAILED = 'Order/UpdateNextShipDateFailed';
 export const ORDER_UPDATED_NEXT_SHIP_DATE = 'Order/UpdatedNextShipDate';
 export const ORDER_UPDATING_NEXT_SHIP_DATE = 'Order/UpdatingNextShipDate';
+export const UPDATE_ORDERS_NEXT_SHIP_DATE = 'Order/UpdateOrdersNextShipDate';
+export const UPDATING_ORDERS_NEXT_SHIP_DATE = 'Order/UpdatingOrdersNextShipDate';
+export const UPDATED_ORDERS_NEXT_SHIP_DATE = 'Order/UpdatedORdersNextShipDate';
 
 export const ORDER_CANCEL_ORDER = 'Order/CancelOrder';
 export const ORDER_CANCELLING_ORDER = 'Order/CancellingOrder';

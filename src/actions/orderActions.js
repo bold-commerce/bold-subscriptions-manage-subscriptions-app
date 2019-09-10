@@ -127,6 +127,9 @@ export const orderUpdatedNextShipDate = data => ({
   type: types.ORDER_UPDATED_NEXT_SHIP_DATE,
   payload: data,
 });
+export const updateOrdersNextShipDate = () => ({ type: types.UPDATE_ORDERS_NEXT_SHIP_DATE });
+export const updatingOrdersNextShipDate = () => ({ type: types.UPDATING_ORDERS_NEXT_SHIP_DATE });
+export const updatedOrdersNextShipDate = () => ({ type: types.UPDATED_ORDERS_NEXT_SHIP_DATE });
 
 export const orderProductGetSwap = (orderId, productId, groupId) => ({
   type: types.ORDER_PRODUCT_GET_SWAP,

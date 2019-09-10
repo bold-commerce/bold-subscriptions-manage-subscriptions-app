@@ -43,6 +43,7 @@ export function* appInitializeData() {
 
   if (response.success) {
     yield put(actions.appDataInitialized(response.data));
+    yield put(actions.updateOrdersNextShipDate());
     yield put(actions.loadProducts());
     yield put(actions.orderLoadCards());
   } else {
