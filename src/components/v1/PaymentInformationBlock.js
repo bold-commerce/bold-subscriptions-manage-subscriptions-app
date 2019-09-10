@@ -127,6 +127,16 @@ class PaymentInformationBlock extends Component {
     this.props.dismissCardMessage(this.props.orderId);
   }
 
+  renderEditButton() {
+    return (
+      <div>
+        <span role="presentation" className="text-button" onClick={this.toggleEditing}>
+          <Translation textKey="edit_button_text" />
+        </span>
+      </div>
+    );
+  }
+
   render() {
     const { order } = this.props;
 
@@ -136,7 +146,10 @@ class PaymentInformationBlock extends Component {
       body = this.getGatewayChangeCardForm();
     } else {
       body = (
-        <CardInformationBlock card={order.credit_card} withLabels />
+        <React.Fragment>
+          <CardInformationBlock card={order.credit_card} withLabels />
+          {this.renderEditButton()}
+        </React.Fragment>
       );
     }
 
