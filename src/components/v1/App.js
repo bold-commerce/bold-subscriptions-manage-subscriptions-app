@@ -57,6 +57,8 @@ class App extends Component {
       case 1:
         return translations.progress_loading_order;
       case 2:
+        return 'Adjusting next order dates';
+      case 3:
         return translations.progress_done;
       default:
         return undefined;

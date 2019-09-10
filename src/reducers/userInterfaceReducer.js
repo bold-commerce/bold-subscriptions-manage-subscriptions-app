@@ -1,7 +1,7 @@
 import * as types from '../constants/actionTypes';
 
 const initialState = {
-  loadingTotal: 2,
+  loadingTotal: 3,
   loadingProgress: 0,
   discountMessages: {},
   applyingDiscount: {},
@@ -40,11 +40,8 @@ export default function userInterface(passedState, action) {
         customerLoggedOutError: true,
       };
     case types.APP_AUTHENTICATED:
-      return {
-        ...state,
-        loadingProgress: state.loadingProgress + 1,
-      };
     case types.APP_DATA_INITIALIZED:
+    case types.UPDATED_ORDERS_NEXT_SHIP_DATE:
       return {
         ...state,
         loadingProgress: state.loadingProgress + 1,
