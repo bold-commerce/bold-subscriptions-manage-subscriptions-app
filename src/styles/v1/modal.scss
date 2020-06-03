@@ -1,0 +1,66 @@
+.bold-msp-modal {
+  position: absolute;
+  top: 80px;
+  left: 80px;
+  right: 80px;
+  bottom: 80px;
+  background: white;
+  padding: 5px;
+
+  @media screen and (max-width: map_get($breakpoints, 'phone')) {
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+  }
+
+
+  /* The Close Button */
+  .bold-msp-modal-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    border: 0px;
+    padding: 0px;
+    background: transparent;
+  }
+
+  .bold-msp-modal-close:hover,
+  .bold-msp-modal-close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+
+.bold-msp-modal-overlay {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  transition: 0.15s ease;
+}
+
+.ReactModal__Content {
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.15s ease;
+  transform: scale(0.75);
+
+
+  &.ReactModal__Content--after-open {
+    visibility: visible;
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.cashier-card-iframe-2 {
+  border: none;
+  width: 100%;
+  height: calc(100% - 40px);
+}

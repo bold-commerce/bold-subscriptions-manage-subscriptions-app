@@ -73,7 +73,7 @@ class EditShippingMethodForm extends Component {
   }
 
   render() {
-    const { order, shippingMethodMessage, allowMulticurrencyDisplay } = this.props;
+    const { order, shippingMethodMessage, allowMulticurrencyDisplay, disabled } = this.props;
     let exchangeRate = !allowMulticurrencyDisplay ? 1 : order.currency_exchange_rate;
     let currencyFormat = !allowMulticurrencyDisplay ? null : order.currency_format;
 
@@ -94,7 +94,7 @@ class EditShippingMethodForm extends Component {
                   __html: UpdateOrderShippingMethod.showShippingSource(order.order_shipping_rate, exchangeRate, currencyFormat),
                 }}
                 />
-                {this.renderEditButton()}
+                {disabled ? null : this.renderEditButton()}
               </React.Fragment>
             )
           }
@@ -120,10 +120,12 @@ EditShippingMethodForm.propTypes = {
   dismissShippingMethodMessage: PropTypes.func.isRequired,
   shippingMethodMessage: MESSAGE_PROP_TYPE,
   allowMulticurrencyDisplay: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool,
 };
 
 EditShippingMethodForm.defaultProps = {
   shippingMethodMessage: null,
+  disabled: false,
 };
 
 const mapDispatchToProps = dispatch => ({

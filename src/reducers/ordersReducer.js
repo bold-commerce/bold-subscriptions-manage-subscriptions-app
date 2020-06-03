@@ -24,6 +24,7 @@ export default function ordersReducer(state, action) {
     case types.ORDER_CLEAR_CASHIER_CARD_DATA:
     case types.ORDER_APPLIED_CANCEL_DISCOUNT:
     case types.ORDER_GET_CASHIER_CARD_DATA_FAILED:
+    case types.ORDER_AUTHENTICATE_CARD_SAVE_CLOSE:
     case types.ORDER_GET_CARD_FAILED: {
       const payload = Object.assign({}, action.payload);
       delete payload.gateway_token;
@@ -31,6 +32,7 @@ export default function ordersReducer(state, action) {
         if (order.id === payload.id) {
           return Object.assign({}, order, payload);
         }
+
         return order;
       });
     }

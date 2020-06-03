@@ -16,6 +16,7 @@ const Input = ({
   placeholder,
   style,
   maxLength,
+  disabled,
 }) => {
   let inputClassNames = [
     'subscription-input',
@@ -25,7 +26,7 @@ const Input = ({
     window
       .manageSubscription
       .displaySettings
-      .input_classname || DEFAULT_INPUT_CLASSNAME,
+      .input_classname || DEFAULT_INPUT_CLASSNAME
   );
   inputClassNames = classnames(inputClassNames);
 
@@ -42,6 +43,7 @@ const Input = ({
     placeholder={placeholder}
     style={style}
     maxLength={maxLength}
+    disabled={disabled}
   />);
 };
 
@@ -58,6 +60,7 @@ Input.propTypes = {
   placeholder: PropTypes.string,
   style: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   maxLength: PropTypes.number,
+  disabled: PropTypes.bool,
 };
 
 Input.defaultProps = {
@@ -72,6 +75,7 @@ Input.defaultProps = {
   placeholder: null,
   style: null,
   maxLength: null,
+  disabled: false,
 };
 
 export default Input;

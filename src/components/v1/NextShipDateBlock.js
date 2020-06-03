@@ -16,8 +16,11 @@ class NextShipDateBlock extends Component {
   constructor(props) {
     super(props);
 
+    const nextShipDate = props.order.next_active_ship_date ?
+      props.order.next_active_ship_date : props.order.next_ship_date;
+
     this.state = {
-      date: props.order.next_ship_date,
+      date: nextShipDate,
       updatingNextShipDate: false,
       updateNextShipDateButtonDisabled: false,
       editing: false,
@@ -69,11 +72,15 @@ class NextShipDateBlock extends Component {
     }
   }
   saveChanges() {
+    if (this.props.order.next_ship_date === this.state.date) {
+      return this.disableEditing();
+    }
+
     this.setState({
       updatingNextShipDate: true,
       updateNextShipDateButtonDisabled: true,
     });
-    this.props.updateNextShipDate(this.props.order.id, moment(this.state.date).format('YYYY-MM-DD'));
+    return this.props.updateNextShipDate(this.props.order.id, moment(this.state.date).format('YYYY-MM-DD'));
   }
   enableEditing() {
     this.dismissMessage();

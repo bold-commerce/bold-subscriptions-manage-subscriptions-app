@@ -99,6 +99,8 @@ const mapStateToProps = (state, ownProps) => {
   const product = order.order_products.find(p => p.id === ownProps.productId);
   const quantity = ownProps.orderDate !== null &&
     order.order_product_exceptions.find(exception => exception.date === ownProps.orderDate)
+    && order.order_product_exceptions.find(exception => exception.date === ownProps.orderDate)
+    .products.find(p => p.product_internal_id === ownProps.productId)
     ? order.order_product_exceptions.find(exception => exception.date === ownProps.orderDate)
       .products.find(p => p.product_internal_id === ownProps.productId).quantity
     : product.quantity;

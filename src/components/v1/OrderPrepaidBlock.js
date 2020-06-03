@@ -4,10 +4,14 @@ import { connect } from 'react-redux';
 import Translation from '../Translation';
 import Message from './Message';
 import * as actions from '../../actions';
-import Input from './Input';
 import ButtonGroup from './ButtonGroup';
 import Button from './Button';
 import { MESSAGE_PROP_TYPE, ORDER_PROP_TYPE } from '../../constants/PropTypes';
+import SelectField from './SelectField';
+
+const stopRenewOrder = '0';
+const renewOrder = '1';
+const cancelOrder = '2';
 
 class OrderPrepaidBlock extends Component {
   constructor(props) {
@@ -16,12 +20,13 @@ class OrderPrepaidBlock extends Component {
     this.state = {
       editingPrepaidSettings: false,
       updatingPrepaidSettings: false,
-      prepaidSettingChecked: Boolean(this.props.recurAfterLimit),
+      prepaidSetting: this.props.recurAfterLimit ? renewOrder : stopRenewOrder,
     };
 
     this.dismissMessage = this.dismissMessage.bind(this);
     this.toggleUpdatingOrderPrepaidSettings = this.toggleUpdatingOrderPrepaidSettings.bind(this);
     this.handlePrepaidSettingsOptionChange = this.handlePrepaidSettingsOptionChange.bind(this);
+    this.getPrepaidSettingsOptions = this.getPrepaidSettingsOptions.bind(this);
     this.updatePrepaidSettings = this.updatePrepaidSettings.bind(this);
   }
 
@@ -34,23 +39,39 @@ class OrderPrepaidBlock extends Component {
     }
   }
 
+  getPrepaidSettingsOptions() {
+    const { order } = this.props;
+    const options = [
+      { name: this.props.renewTranslation, value: renewOrder },
+      { name: this.props.stopRenewTranslation, value: stopRenewOrder },
+    ];
+    if (order.prepaid_settings.recurrence_count === 0) {
+      options.push({ name: this.props.cancelTranslation, value: cancelOrder });
+    }
+    return options;
+  }
+
   toggleUpdatingOrderPrepaidSettings() {
     this.dismissMessage();
     this.setState({
       editingPrepaidSettings: !this.state.editingPrepaidSettings,
-      prepaidSettingChecked: Boolean(this.props.recurAfterLimit),
+      prepaidSetting: this.props.recurAfterLimit ? renewOrder : stopRenewOrder,
     });
   }
 
-  handlePrepaidSettingsOptionChange() {
-    this.setState({ prepaidSettingChecked: !this.state.prepaidSettingChecked });
+  handlePrepaidSettingsOptionChange(e) {
+    this.setState({ prepaidSetting: e.target.value });
   }
 
   updatePrepaidSettings() {
-    this.props.orderUpdatePrepaidSettings(
-      this.props.order.id,
-      this.state.prepaidSettingChecked ? 1 : 0,
-    );
+    const { order } = this.props;
+    if (this.state.prepaidSetting === stopRenewOrder) {
+      this.props.orderUpdatePrepaidSettings(order.id, stopRenewOrder);
+    } else if (this.state.prepaidSetting === renewOrder) {
+      this.props.orderUpdatePrepaidSettings(order.id, renewOrder);
+    } else if (this.state.prepaidSetting === cancelOrder) {
+      this.props.cancelOrder(order.id);
+    }
     this.setState({
       updatingPrepaidSettings: true,
     });
@@ -68,15 +89,14 @@ class OrderPrepaidBlock extends Component {
       return (
         <div>
           <div>
-            <Input
-              type="checkbox"
-              id={`${order.id}-prepaid-setting-checkbox`}
-              checked={this.state.prepaidSettingChecked}
+            <SelectField
+              loading={this.state.loadingIcon}
+              name="prepaid"
+              value={this.state.prepaidSetting}
+              options={this.getPrepaidSettingsOptions()}
+              labelTextKey="order_prepaid_renew_question"
               onChange={this.handlePrepaidSettingsOptionChange}
             />
-            <label htmlFor={`${order.id}-prepaid-setting-checkbox`}>
-              <Translation textKey="order_prepaid_renew_question" />
-            </label>
           </div>
           <ButtonGroup align="left" >
             <Button
@@ -160,13 +180,21 @@ OrderPrepaidBlock.propTypes = {
   }).isRequired,
   orderUpdatePrepaidSettings: PropTypes.func.isRequired,
   dismissUpdatePrepaidSettingsMessage: PropTypes.func.isRequired,
+  cancelOrder: PropTypes.func.isRequired,
   updatePrepaidSettingsMessage: MESSAGE_PROP_TYPE,
   recurAfterLimit: PropTypes.number,
+  renewTranslation: PropTypes.string,
+  stopRenewTranslation: PropTypes.string,
+  cancelTranslation: PropTypes.string,
+
 };
 
 OrderPrepaidBlock.defaultProps = {
   updatePrepaidSettingsMessage: null,
   recurAfterLimit: 0,
+  renewTranslation: '',
+  stopRenewTranslation: '',
+  cancelTranslation: '',
 };
 
 const mapDispatchToProps = dispatch => ({
@@ -176,6 +204,9 @@ const mapDispatchToProps = dispatch => ({
   dismissUpdatePrepaidSettingsMessage: (orderId) => {
     dispatch(actions.dismissUpdatePrepaidSettingsMessage(orderId));
   },
+  cancelOrder: (orderId) => {
+    dispatch(actions.orderCancelOrder(orderId, 'No reason'));
+  },
 });
 
 const mapStateToProps = (state, ownProps) => ({
@@ -184,6 +215,10 @@ const mapStateToProps = (state, ownProps) => ({
     .prepaid_settings.recurr_after_limit,
   generalSettings: state.data.general_settings,
   updatePrepaidSettingsMessage: state.userInterface.updatePrepaidSettingsMessages[ownProps.orderId],
+  renewTranslation: state.data.translations.order_prepaid_renew_yes,
+  stopRenewTranslation: state.data.translations.order_prepaid_renew_no,
+  cancelTranslation: state.data.translations.cancel_block_heading,
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderPrepaidBlock);

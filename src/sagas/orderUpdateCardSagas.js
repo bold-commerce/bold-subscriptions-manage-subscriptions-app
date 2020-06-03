@@ -5,7 +5,7 @@ import * as types from '../constants/actionTypes';
 import * as actions from '../actions/index';
 
 export function* orderUpdateCard(action) {
-  yield put(actions.orderUpdatingCard());
+  yield put(actions.orderUpdatingCard(action.payload.orderId));
 
   const response = yield call(requestHelpers.apiPutRequest, `orders/${action.payload.orderId}/card`, {
     token: action.payload.token,

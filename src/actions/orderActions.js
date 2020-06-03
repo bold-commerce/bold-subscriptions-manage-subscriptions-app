@@ -481,3 +481,53 @@ export const orderAttemptedCancellation = (orderId, cancelReason) => ({
   type: types.ORDER_ATTEMPTED_CANCEL_LOG,
   payload: { orderId, cancelReason },
 });
+
+export const orderAuthenticateCardInitialize = orderId => ({
+  type: types.ORDER_AUTHENTICATE_CARD_INITIALIZE,
+  payload: { orderId },
+});
+
+export const orderAuthenticateCardInitializeSuccess = (orderId, data) => ({
+  type: types.ORDER_AUTHENTICATE_CARD_INITIALIZE_SUCCESS,
+  payload: { orderId, ...data },
+});
+
+export const orderAuthenticateCardInitializeFailed = (orderId, message) => ({
+  type: types.ORDER_AUTHENTICATE_CARD_INITIALIZE_FAILED,
+  payload: { orderId, message },
+});
+
+export const orderAuthenticateCardClear = orderId => ({
+  type: types.ORDER_AUTHENTICATE_CARD_CLEAR,
+  payload: { orderId },
+});
+
+export const orderAuthenticateCardSave = (orderId, data) => ({
+  type: types.ORDER_AUTHENTICATE_CARD_SAVE,
+  payload: { orderId, data },
+});
+
+export const orderAuthenticateCardSaveSuccess = (orderId, data) => ({
+  type: types.ORDER_AUTHENTICATE_CARD_SAVE_SUCCESS,
+  payload: { orderId, ...data },
+});
+
+export const orderAuthenticateCardSaveClose = (orderId, data) => ({
+  type: types.ORDER_AUTHENTICATE_CARD_SAVE_CLOSE,
+  payload: { id: orderId, ...data },
+});
+
+export const orderAuthenticateCardSaveFailed = (orderId, message) => ({
+  type: types.ORDER_AUTHENTICATE_CARD_SAVE_FAILED,
+  payload: { orderId, message },
+});
+
+export const orderSaveNewCashierPaymentMethod = (orderId, lastFour, expiryDate) => ({
+  type: types.ORDER_SAVE_NEW_CASHIER_PAYMENT_METHOD,
+  payload: { orderId, lastFour, expiryDate },
+});
+
+export const orderSaveCashierPaymentMethod = (orderId, token, cashierCards = null) => ({
+  type: types.ORDER_SAVE_CASHIER_PAYMENT_METHOD,
+  payload: { orderId, token, cashier_cards: cashierCards },
+});

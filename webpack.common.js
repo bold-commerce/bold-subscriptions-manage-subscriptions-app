@@ -3,7 +3,7 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: {
-    app: ['idempotent-babel-polyfill', './src/index.js'],
+    app: ['idempotent-babel-polyfill', 'url-polyfill', 'formdata-polyfill', './src/index.js'],
   },
   output: {
     filename: '[name].bundle.js',

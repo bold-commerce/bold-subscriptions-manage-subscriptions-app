@@ -12,6 +12,7 @@ const Button = ({
   type,
   className,
   btnStyle,
+  buttonRef,
 }) => {
   let buttonClassNames = [
     'subscription-button',
@@ -45,6 +46,7 @@ const Button = ({
       className={buttonClassNames}
       disabled={disabled}
       onClick={onClick}
+      ref={buttonRef}
     >
       <Translation textKey={textKey} />
       { loading ? <span>{'\u00A0'}<span className="subscription-loading-icon" /></span> : null }
@@ -60,6 +62,7 @@ Button.propTypes = {
   loading: PropTypes.bool,
   type: PropTypes.string,
   btnStyle: PropTypes.string,
+  buttonRef: PropTypes.func,
 };
 
 Button.defaultProps = {
@@ -69,6 +72,7 @@ Button.defaultProps = {
   loading: false,
   type: 'button',
   btnStyle: 'primary',
+  buttonRef: null,
 };
 
 export default Button;

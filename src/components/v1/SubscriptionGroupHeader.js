@@ -92,6 +92,12 @@ class SubscriptionGroupHeader extends Component {
                       <Translation textKey="order_hook_switch_price_product_warning" />
                     </p>
                   );
+                case OrderHookTypes.ORDER_HOOK_TYPE_REDUCE_QUANTITY:
+                  return (
+                    <p key="order_hook_reduce_quantity">
+                      <Translation textKey="order_hook_reduce_quantity_warning" />
+                    </p>
+                  );
                 case OrderHookTypes.ORDER_HOOK_TYPE_MAKE_CANCELLABLE:
                   return (
                     <p key="order_hook_make_cancellable_warning">
@@ -148,7 +154,7 @@ class SubscriptionGroupHeader extends Component {
             <div className="flex-column flex-column-half">
               <div className="subscription-details-block">
                 <p><Translation textKey="payment_info_heading" /></p>
-                <CardInformationBlock card={order.credit_card} />
+                <CardInformationBlock card={order.credit_card} gateway={this.props.gatewayName} />
               </div>
               <div className="subscription-details-block">
                 <p><Translation textKey="order_frequency_heading" /></p>
@@ -173,6 +179,8 @@ SubscriptionGroupHeader.propTypes = {
   order: ORDER_PROP_TYPE.isRequired,
   hasDeletedProducts: PropTypes.bool.isRequired,
   allowPauseSubscription: PropTypes.bool.isRequired,
+  // eslint-disable-next-line react/require-default-props
+  gatewayName: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -183,6 +191,7 @@ const mapStateToProps = (state, ownProps) => {
     order,
     hasDeletedProducts,
     allowPauseSubscription,
+    gatewayName: state.data.general_settings.gateway_name,
   };
 };
 

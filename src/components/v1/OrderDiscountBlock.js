@@ -102,7 +102,7 @@ class OrderDiscountBlock extends Component {
             <p><Translation textKey="discount_block_heading" /></p>
             <p>{order.discount.discount_code} - {order.discount.discount_details}</p>
           </div>
-          : <p>This order has no discount applied</p>
+          : <p><Translation textKey="discount_code_not_applied" /></p>
         }
         {
           this.props.discountMessage ?

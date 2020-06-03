@@ -89,6 +89,7 @@ class EditBillingAddressForm extends Component {
     const optionalInputs = {
       billing_address2: true,
       billing_phone: true,
+      billing_company: true,
     };
 
     if (e.target.value === '' && !optionalInputs[e.target.name]) {
@@ -149,7 +150,7 @@ class EditBillingAddressForm extends Component {
   }
 
   render() {
-    const { order, billingMessage } = this.props;
+    const { order, billingMessage, disabled } = this.props;
     const selectedCountryHasProvinces = countryHasProvinces(this.state.selectedCountry);
     const provinces = getProvinceOptions(this.state.selectedCountry);
     // eslint-disable-next-line max-len
@@ -294,7 +295,7 @@ class EditBillingAddressForm extends Component {
                 <p>{order.billing_phone}</p>
                 : null
             }
-            { this.renderEditButton() }
+            { disabled ? null : this.renderEditButton() }
           </div>
         ),
         billingMessage ?
@@ -317,11 +318,13 @@ EditBillingAddressForm.propTypes = {
   countries: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   billingMessage: MESSAGE_PROP_TYPE,
   dismissBillingMessage: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
 };
 
 EditBillingAddressForm.defaultProps = {
   key: null,
   billingMessage: null,
+  disabled: false,
 };
 
 const mapStateToProps = (state, ownProps) => ({

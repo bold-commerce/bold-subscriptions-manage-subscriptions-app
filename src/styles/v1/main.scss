@@ -15,6 +15,8 @@
 @import 'orderProductRemove';
 @import 'gatewayInput';
 @import 'orderProductSwap';
+@import 'fullScreenIframe';
+@import 'modal';
 
 .text-button {
   cursor: pointer;
@@ -137,7 +139,6 @@
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
-      margin-right: 5px;
     }
     .ro-translation-products_list_quantity {
       flex-shrink: 0;
@@ -181,6 +182,9 @@
 
 .subscription-content {
   padding: 16px;
+  @media screen and (max-width: map_get($breakpoints, 'phone')) {
+    padding: 0px;
+  }
   &.altered {
     display: none;
   }
@@ -242,6 +246,13 @@
 }
 .SingleDatePicker_picker {
   transform: translateX(-10%);
+}
+
+.PayPalBlock {
+  img {
+    vertical-align: middle;
+    margin-right: 1em;
+  }
 }
 
 @media (max-width: 750px) {

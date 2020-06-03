@@ -3,11 +3,13 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
+import Modal from 'react-modal';
 
 import App from './components/v1/App';
 import rootReducer from './reducers/index';
 import rootSaga from './sagas/index';
 import './styles/v1/main.scss';
+
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // eslint-disable-line
 const sagaMiddleware = createSagaMiddleware();
@@ -28,4 +30,5 @@ if (!window.manageSubscription.shopifyCustomerId) {
     </Provider>,
     document.getElementById('manage-subscription-root'),
   );
+  Modal.setAppElement('#manage-subscription-root');
 }
