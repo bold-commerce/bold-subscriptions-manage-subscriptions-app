@@ -121,6 +121,7 @@ class EditShippingAddressForm extends Component {
     const optionalInputs = {
       address2: true,
       phone: true,
+      company: true,
     };
 
     if (e.target.value === '' && !optionalInputs[e.target.name]) {
@@ -210,6 +211,7 @@ class EditShippingAddressForm extends Component {
       order,
       shippingMessage,
       getShippingRatesFailedMessage,
+      disabled,
     } = this.props;
     const selectedCountryHasProvinces = countryHasProvinces(this.state.selectedCountry);
     const provinces = getProvinceOptions(this.state.selectedCountry);
@@ -376,7 +378,7 @@ class EditShippingAddressForm extends Component {
                 <p>{order.phone}</p>
                 : null
             }
-            { this.renderEditButton() }
+            { disabled ? null : this.renderEditButton() }
           </div>
         ),
         shippingMessage && (shippingMessage.type === 'success' || shippingMessage.type === 'error') ?
@@ -402,11 +404,13 @@ EditShippingAddressForm.propTypes = {
   getShippingRatesFailedMessage: MESSAGE_PROP_TYPE,
   dismissShippingMessage: PropTypes.func.isRequired,
   allowChangeShippingAddressPrepaid: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool,
 };
 
 EditShippingAddressForm.defaultProps = {
   shippingMessage: null,
   getShippingRatesFailedMessage: null,
+  disabled: false,
 };
 
 const mapStateToProps = (state, ownProps) => ({

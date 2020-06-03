@@ -13,7 +13,7 @@ import Translation from '../Translation';
 import UpcomingOrdersBlock from './UpcomingOrdersBlock';
 import OrderCancellationBlock from './OrderCancellationBlock';
 import { ORDER_PROP_TYPE } from '../../constants/PropTypes';
-import formatMoney from '../../helpers/moneyFormatHelpers';
+import SubscriptionGroupAuthCreditCard from './SubscriptionGroupAuthCreditCard';
 
 class SubscriptionGroup extends Component {
   constructor(props) {
@@ -23,6 +23,16 @@ class SubscriptionGroup extends Component {
     };
 
     this.toggleDetails = this.toggleDetails.bind(this);
+  }
+
+  componentDidMount() {
+    this.oneSub();
+  }
+
+  oneSub() {
+    if (this.props.orderCount === 1) {
+      this.setState({ contentAltered: !this.state.contentAltered });
+    }
   }
 
   toggleDetails() {
@@ -35,6 +45,7 @@ class SubscriptionGroup extends Component {
     return (
       <div className="subscription-container">
         <SubscriptionGroupHeader orderId={order.id} />
+        {order.status === 2 ? <SubscriptionGroupAuthCreditCard orderId={order.id} /> : null}
         {
           hasDeletedProducts ? null :
           <div className="subscription-content-container">
@@ -54,11 +65,11 @@ class SubscriptionGroup extends Component {
               </p>
             </div>
             <div className={classnames('subscription-content', this.state.contentAltered ? '' : 'altered')}>
-              <AddressShippingBlock orderId={order.id} />
-              <PaymentInformationBlock orderId={order.id} />
-              <OrderProductsBlock orderId={order.id} />
-              <UpcomingOrdersBlock orderId={order.id} />
-              <OrderDiscountBlock orderId={order.id} />
+              <AddressShippingBlock orderId={order.id} disabled={order.status !== 0} />
+              <PaymentInformationBlock orderId={order.id} status={order.status} />
+              <OrderProductsBlock orderId={order.id} disabled={order.status !== 0} />
+              <UpcomingOrdersBlock orderId={order.id} disabled={order.status !== 0} />
+              <OrderDiscountBlock orderId={order.id} disabled={order.status !== 0} />
               <TransactionHistoryBlock orderId={order.id} />
               {
                 (order.is_cancellable) ?
@@ -76,12 +87,14 @@ class SubscriptionGroup extends Component {
 SubscriptionGroup.propTypes = {
   order: ORDER_PROP_TYPE.isRequired,
   hasDeletedProducts: PropTypes.bool.isRequired,
+  orderCount: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   order: state.data.orders.find(order => order.id === ownProps.orderId),
   hasDeletedProducts: state.data.orders.find(o => o.id === ownProps.orderId)
     .order_products.filter(prod => prod.status === 1).length > 0,
+  orderCount: state.data.orders.length,
 });
 
 export default connect(mapStateToProps)(SubscriptionGroup);

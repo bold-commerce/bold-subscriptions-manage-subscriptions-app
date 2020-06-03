@@ -22,6 +22,8 @@ import orderUpdatePrepaidSettingsSagas from './orderUpdatePrepaidSettingsSagas';
 import orderCancelDiscountSagas from './orderCancelDiscountSagas';
 import klaviyoCancelOrderSagas from './klaviyoCancelOrderSagas';
 import orderAttemptedCancellationSagas from './orderAttemptedCancellationSagas';
+import orderAuthenticateCardSagas from './orderAuthenticateCardSagas';
+import orderSaveNewCashierPaymentMethodSagas from './orderSaveNewCashierPaymentMethodSagas';
 
 export default function* rootSaga() {
   yield all([
@@ -47,5 +49,7 @@ export default function* rootSaga() {
     orderCancelDiscountSagas(),
     klaviyoCancelOrderSagas(),
     orderAttemptedCancellationSagas(),
+    orderAuthenticateCardSagas(),
+    orderSaveNewCashierPaymentMethodSagas(),
   ]);
 }

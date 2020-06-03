@@ -14,6 +14,7 @@ const Message = ({
   dismissable,
   onDismissClick,
   mergeFields,
+  fullWidth,
 }) => {
   const messageClassNames = classnames([
     'subscription-message',
@@ -23,10 +24,16 @@ const Message = ({
     { 'subscription-message-with-success': type === 'success' },
     className,
   ]);
+  const style = {};
+  if (fullWidth) {
+    style.width = '100%';
+  }
+
   return (
     <div
       id={id}
       className={messageClassNames}
+      style={style}
     >
       {dismissable ? (
         <span
@@ -63,6 +70,7 @@ Message.propTypes = {
   dismissable: PropTypes.bool,
   onDismissClick: PropTypes.func,
   mergeFields: PropTypes.shape({}),
+  fullWidth: PropTypes.bool,
 };
 
 Message.defaultProps = {
@@ -75,6 +83,7 @@ Message.defaultProps = {
   dismissable: false,
   onDismissClick: null,
   mergeFields: {},
+  fullWidth: false,
 };
 
 export default Message;

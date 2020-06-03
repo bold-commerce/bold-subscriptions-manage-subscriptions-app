@@ -14,6 +14,7 @@ import OrderProductSwap from './OrderProductSwap';
 import OrderProducts from './OrderProducts';
 import ButtonGroup from './ButtonGroup';
 import { ORDER_PROP_TYPE, MESSAGE_PROP_TYPE } from '../../constants/PropTypes';
+import OrderCancellationPauseButton from './OrderCancellationPauseButton';
 
 class OrderCancellationCancelOffers extends Component {
   static renderCancelOfferDetail(cancelOffer) {
@@ -26,6 +27,8 @@ class OrderCancellationCancelOffers extends Component {
         return (<Translation textKey="cancel_offer_change_quantity" />);
       case OrderCancellationStates.OFFER_TYPE_DISCOUNT_CODE:
         return (`${cancelOffer.discount_code} - ${cancelOffer.discount_detail}`);
+      case OrderCancellationStates.OFFER_TYPE_PAUSE_SUBSCRIPTION:
+        return (<Translation textKey="cancel_offer_pause_subscription" />);
       default:
         return null;
     }
@@ -75,7 +78,7 @@ class OrderCancellationCancelOffers extends Component {
 
   toggleConfirmingCancellation() {
     const { cancelReason, order } = this.props;
-    this.props.saveAttemptedCancellation(order.id, cancelReason.id);
+    this.props.saveAttemptedCancellation(order.id, cancelReason.cancel_reason);
     this.setState({
       confirmingCancellation: !this.state.confirmingCancellation,
     });
@@ -232,6 +235,23 @@ class OrderCancellationCancelOffers extends Component {
             <OrderProductEditQuantityBlock orderId={order.id} toggleEdit={this.showSavedPage} />
           </div>
         );
+      case OrderCancellationStates.OFFER_TYPE_PAUSE_SUBSCRIPTION:
+        return (
+          <div>
+            <h6><Translation textKey="cancel_offer_pause_subscription" /></h6>
+            <Message
+              type="info"
+              titleTextKey="pause_subscription_confirmation"
+            />
+            <div>
+              <Translation textKey="subscription_status_heading" />
+            </div>
+            {this.renderPauseResumeStatus()}
+            <ButtonGroup>
+              <OrderCancellationPauseButton order={order} />
+            </ButtonGroup>
+          </div>
+        );
       default:
         return null;
     }
@@ -309,6 +329,17 @@ class OrderCancellationCancelOffers extends Component {
     );
   }
 
+  renderPauseResumeStatus() {
+    const { order } = this.props;
+    return (
+      <React.Fragment>
+        { order.is_paused ?
+          <Translation textKey="paused_subscription_status" /> :
+          <Translation textKey="active_subscription_status" />
+        }
+      </React.Fragment>
+    );
+  }
   render() {
     const { cancelDiscountMessage, cancelReason } = this.props;
     const { numOffers } = this.state;

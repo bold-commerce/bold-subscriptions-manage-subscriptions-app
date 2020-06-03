@@ -22,3 +22,9 @@ $successColor: hsl($successHue,50%,50%);
 $warningHue: 25;
 $warningColor: hsl($warningHue, 80%,73%);
 $warningTextColor: hsl($warningHue, 50%, 37%);
+
+$breakpoints: (phone: 640px,
+        tablet: 768px,
+        desktop: 1024px) !default;
+
+

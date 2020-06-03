@@ -112,7 +112,9 @@ class OrderProductEditQuantityBlock extends Component {
     const { order, orderDate } = this.props;
     const productTotals = order.order_products.map((prod) => {
       const qty = orderDate !== null &&
+      order.order_product_exceptions.find(exception => exception.date === orderDate) &&
       order.order_product_exceptions.find(exception => exception.date === orderDate)
+        .products.find(product => product.product_internal_id === prod.id)
         ? order.order_product_exceptions.find(exception => exception.date === orderDate)
           .products.find(product => product.product_internal_id === prod.id).quantity
         : prod.quantity;

@@ -1,0 +1,40 @@
+.subscription-content {
+  .subscription-content-block {
+    &.iframe
+    {
+      .subscription-content-block-body {
+        padding: 0px;
+      }
+    }
+    &.highlighted {
+      @media screen and (max-width: map_get($breakpoints, 'phone')) {
+        width: 98%;
+        height: 99vh;
+        left: 1%;
+        margin-top: 3px;
+      }
+    }
+  }
+}
+
+.full-screen-iframe {
+  iframe {
+    //width: 100vw;
+    height: 90vh;
+    text-align: center;
+    border: 0px;
+  }
+
+  a:first-child {
+    text-decoration: none;
+    color: #818181;
+    float: right;
+    transition: 0.3s;
+    padding: 5px;
+    margin: 2px;
+    text-align: right;
+    border: 1px #c1c1c1 solid;
+    border-radius: 6px;
+    font-weight: bolder;
+  }
+}

@@ -106,6 +106,8 @@ export const ORDER_GETTING_CASHIER_CARD_DATA = 'Order/GettingCashierCardData';
 export const ORDER_GOT_CASHIER_CARD_DATA = 'Order/GotCashierCardData';
 export const ORDER_GET_CASHIER_CARD_DATA_FAILED = 'Order/GetCashierCardDataFailed';
 export const ORDER_CLEAR_CASHIER_CARD_DATA = 'Order/ClearCashierCardData';
+export const ORDER_SAVE_NEW_CASHIER_PAYMENT_METHOD = 'Order/SaveNewPaymentMethod';
+export const ORDER_SAVE_CASHIER_PAYMENT_METHOD = 'Order/SaveCashierPaymentMethod';
 
 export const INTERFACE_DISMISS_DISCOUNT_MESSAGE = 'Interface/DismissDiscountFailedMessage';
 export const INTERFACE_DISMISS_BILLING_MESSAGE = 'Interface/DismissSaveBillingAddressMessage';
@@ -153,3 +155,13 @@ export const ORDER_APPLIED_CANCEL_DISCOUNT = 'Order/AppliedCancelDiscount';
 export const ORDER_APPLY_CANCEL_DISCOUNT_FAILED = 'Order/ApplyCancelDiscountFailed';
 
 export const ORDER_ATTEMPTED_CANCEL_LOG = 'Order/AttemptedCancellation';
+
+export const ORDER_AUTHENTICATE_CARD_CLEAR = 'Order/AuthenticateCardClear';
+export const ORDER_AUTHENTICATE_CARD_INITIALIZE = 'Order/AuthenticateCardInitialize';
+export const ORDER_AUTHENTICATE_CARD_INITIALIZE_SUCCESS = 'Order/AuthenticateCardInitializeSuccess';
+export const ORDER_AUTHENTICATE_CARD_INITIALIZE_FAILED = 'Order/AuthenticateCardInitializeFailed';
+
+export const ORDER_AUTHENTICATE_CARD_SAVE = 'Order/AuthenticateCardSave';
+export const ORDER_AUTHENTICATE_CARD_SAVE_SUCCESS = 'Order/AuthenticateCardSaveSuccess';
+export const ORDER_AUTHENTICATE_CARD_SAVE_CLOSE = 'Order/AuthenticateCardSaveClose';
+export const ORDER_AUTHENTICATE_CARD_SAVE_FAILED = 'Order/AuthenticateCardSaveFailed';

@@ -22,6 +22,12 @@ const initialState = {
   productSwapMessages: {},
   cancelDiscountMessage: {},
   customerLoggedOutError: false,
+  authenticateCardInitializeLoading: {},
+  authenticateCardInitializeData: {},
+  authenticateCardInitializeError: {},
+  authenticateCardSaveLoading: {},
+  authenticateCardSaveData: {},
+  authenticateCardSaveError: {},
 };
 
 export default function userInterface(passedState, action) {
@@ -602,6 +608,102 @@ export default function userInterface(passedState, action) {
             message: action.payload.message,
             type: 'error',
           },
+        },
+      };
+    case types.ORDER_AUTHENTICATE_CARD_INITIALIZE:
+      return {
+        ...state,
+        authenticateCardInitializeLoading: {
+          [action.payload.orderId]: true,
+        },
+        authenticateCardInitializeError: {
+          [action.payload.orderId]: null,
+        },
+        authenticateCardSaveLoading: {},
+        authenticateCardSaveDatta: {},
+      };
+    case types.ORDER_AUTHENTICATE_CARD_INITIALIZE_FAILED:
+      return {
+        ...state,
+        authenticateCardInitializeLoading: {
+          [action.payload.orderId]: false,
+        },
+        authenticateCardInitializeError: {
+          [action.payload.orderId]: {
+            ...action.payload,
+          },
+        },
+      };
+    case types.ORDER_AUTHENTICATE_CARD_CLEAR:
+      return {
+        ...state,
+        authenticateCardInitializeLoading: {
+          [action.payload.orderId]: false,
+        },
+        authenticateCardInitializeData: {
+          [action.payload.orderId]: {},
+        },
+        authenticateCardSaveLoading: {
+          [action.payload.orderId]: null,
+        },
+        authenticateCardInitializeError: {
+          [action.payload.orderId]: null,
+        },
+      };
+    case types.ORDER_AUTHENTICATE_CARD_INITIALIZE_SUCCESS:
+      return {
+        ...state,
+        authenticateCardInitializeLoading: {
+          [action.payload.orderId]: false,
+        },
+        authenticateCardInitializeData: {
+          [action.payload.orderId]: action.payload,
+        },
+      };
+    case types.ORDER_AUTHENTICATE_CARD_SAVE:
+      return {
+        ...state,
+        authenticateCardSaveLoading: {
+          [action.payload.orderId]: true,
+        },
+      };
+    case types.ORDER_AUTHENTICATE_CARD_SAVE_FAILED:
+      return {
+        ...state,
+        authenticateCardSaveLoading: {
+          [action.payload.orderId]: false,
+        },
+        authenticateCardInitializeError: {
+          [action.payload.orderId]: {
+            ...action.payload,
+          },
+        },
+      };
+    case types.ORDER_AUTHENTICATE_CARD_SAVE_SUCCESS:
+      return {
+        ...state,
+        authenticateCardSaveLoading: {
+          [action.payload.orderId]: false,
+        },
+        authenticateCardInitializeData: {
+          [action.payload.orderId]: {},
+        },
+        authenticateCardSaveData: {
+          [action.payload.orderId]: action.payload,
+        },
+      };
+    case types.ORDER_AUTHENTICATE_CARD_SAVE_CLOSE:
+      return {
+        ...state,
+        authenticateCardInitializeLoading:
+          {
+            [action.payload.orderId]: false,
+          },
+        authenticateCardSaveLoading: {
+          [action.payload.orderId]: false,
+        },
+        authenticateCardSaveData: {
+          [action.payload.orderId]: {},
         },
       };
     default:

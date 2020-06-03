@@ -136,7 +136,7 @@ class OrderProductSwapConfirm extends Component {
         const shippingDifference = this.state.shippingRate !== null ?
           (this.state.shippingRate.price - order.order_shipping_rate.price) * exchangeRate * 100 :
           null;
-        const shippingTotal = this.getPrepaidShippingTotal() * exchangeRate * 100;
+        const shippingTotal = this.getPrepaidShippingTotal() * exchangeRate;
 
         swapProductMessage = (
           <Fragment>
