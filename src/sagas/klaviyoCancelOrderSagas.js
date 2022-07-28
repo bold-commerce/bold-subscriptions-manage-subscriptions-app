@@ -1,6 +1,7 @@
+/* global _learnq:readonly */
+
 import { all, put, select, takeLatest } from 'redux-saga/effects';
 
-import * as requestHelpers from '../helpers/requestHelpers';
 import * as types from '../constants/actionTypes';
 import * as actions from '../actions/index';
 
@@ -19,7 +20,7 @@ export function* klaviyoCancelOrder(action) {
   };
 
   const order = yield select(getOrder);
-  const cancelReason = action.payload.cancelReason;
+  const { cancelReason } = action.payload;
 
   const variantData = order.order_products.reduce((p, c) => ({
     [PRODUCT_IDS_KEY]: [
@@ -50,7 +51,7 @@ export function* klaviyoCancelOrder(action) {
     'track',
     'Canceled Subscription',
     {
-      Email: order.customer_email,
+      $email: order.customer_email,
       'Cancel Reason': cancelReason,
       ...variantData,
     },

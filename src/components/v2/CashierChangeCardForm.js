@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -10,7 +10,6 @@ import Translation from '../Translation';
 import Input from '../v1/Input';
 import * as actions from '../../actions';
 import Message from '../v1/Message';
-import { CASHIER_SAVED_PAYMENT_METHOD_MESSAGE } from '../../constants';
 
 class CashierChangeCardForm extends Component {
   constructor(props) {
@@ -85,15 +84,24 @@ class CashierChangeCardForm extends Component {
   }
 
   saveCardClick() {
-    this.setState({ hasChanges: true, saving: true, mode: CashierChangeCardForm.MODES.SELECT }, () => {
-      this.props.setBlockMode('saving');
-      this.props.saveCashierPaymentMethod(this.props.orderId, this.state.currentlySelectedCardId);
-    });
+    this.setState(
+      { hasChanges: true, saving: true, mode: CashierChangeCardForm.MODES.SELECT },
+      () => {
+        this.props.setBlockMode('saving');
+        this.props.saveCashierPaymentMethod(this.props.orderId, this.state.currentlySelectedCardId);
+      },
+    );
   }
 
   fetchCashierIframe(extraParams = {}) {
     const queryStringAppend = Object.entries(extraParams)
       .reduce((p, [key, value]) => `${p}&${key}=${value}`, '');
+
+    if (!window.links) {
+      window.links = [];
+    }
+
+    window.links.push(`https://${window.location.hostname}/apps/checkout/payment-method-management/${this.props.shopUrl}/shopify?currency=${this.props.currency}&customer_public_id=${this.props.customerPublicId}&billing_address=${this.props.billingAddress}${queryStringAppend}`);
 
     fetch(`https://${window.location.hostname}/apps/checkout/payment-method-management/${this.props.shopUrl}/shopify?currency=${this.props.currency}&customer_public_id=${this.props.customerPublicId}&billing_address=${this.props.billingAddress}${queryStringAppend}`)
       .then((result) => {
@@ -179,23 +187,6 @@ class CashierChangeCardForm extends Component {
     );
   }
 
-  renderPaypalInfo(card) {
-    return (
-      <div className="cashier-card-label">
-        <div>PayPal - {card.paypal_email}</div>
-        {
-          card.public_id === this.state.currentlySelectedCardId ?
-            <Button
-              btnStyle="link"
-              textKey="edit_card_button_text"
-              onClick={this.editCardClick}
-            />
-            : null
-        }
-      </div>
-    );
-  }
-
   renderSelectCard() {
     const { currentlySelectedCardId, hasChanges } = this.state;
     const { cardList, orderId } = this.props;
@@ -227,8 +218,7 @@ class CashierChangeCardForm extends Component {
                   onChange={this.selectCardChange}
                   disabled={this.state.saving}
                 />
-                { card.paypal_email ? this.renderPaypalInfo(card) :
-                  this.renderCreditCardInfo(card) }
+                { this.renderPaymentMethodInfo(card) }
               </label>
             </Field>
           ))
@@ -260,8 +250,41 @@ class CashierChangeCardForm extends Component {
     );
   }
 
-  renderCreditCardInfo(card) {
+  renderPaymentMethodInfo(card) {
     const { currentlySelectedCardId } = this.state;
+
+    if (card.type === 'paypal') {
+      return (
+        <div className="cashier-card-label">
+          <div>PayPal - {card.paypal_email}</div>
+          {
+            card.public_id === this.state.currentlySelectedCardId ?
+              <Button
+                btnStyle="link"
+                textKey="edit_card_button_text"
+                onClick={this.editCardClick}
+              />
+              : null
+          }
+        </div>
+      );
+    }
+    if (card.type === 'venmo') {
+      return (
+        <div className="cashier-card-label">
+          <div>Venmo - {card.venmo_username}</div>
+          {
+            card.public_id === this.state.currentlySelectedCardId ?
+              <Button
+                btnStyle="link"
+                textKey="edit_card_button_text"
+                onClick={this.editCardClick}
+              />
+              : null
+          }
+        </div>
+      );
+    }
 
     return (
       <div className="cashier-card-label">
@@ -312,7 +335,9 @@ CashierChangeCardForm.MODES = {
 };
 
 CashierChangeCardForm.propTypes = {
+  // eslint-disable-next-line react/no-unused-prop-types
   cancelOnClick: PropTypes.func.isRequired,
+  // eslint-disable-next-line react/no-unused-prop-types
   saveCard: PropTypes.func.isRequired,
   getCashierCardData: PropTypes.func.isRequired,
   orderId: PropTypes.number.isRequired,
@@ -339,6 +364,10 @@ CashierChangeCardForm.defaultProps = {
   currentlySelectedCardId: '',
   saving: false,
   blockMode: 'editing',
+  shopUrl: '',
+  currency: '',
+  billingAddress: '',
+  customerPublicId: '',
 };
 
 const mapStateToProps = (state, ownProps) => {

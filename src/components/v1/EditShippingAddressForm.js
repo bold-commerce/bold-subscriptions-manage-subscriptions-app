@@ -319,7 +319,7 @@ class EditShippingAddressForm extends Component {
                   defaultValue={this.state.formInformation.city}
                   onChange={this.checkFields}
                 />
-                {this.selectedCountryZipRequired() ?
+                {this.selectedCountryZipRequired() || order.zip ?
                   <InputField
                     name="zip"
                     id="zip"
@@ -370,7 +370,7 @@ class EditShippingAddressForm extends Component {
             <p>
               {order.city}
               {selectedCountryHasProvinces ? ` ${order.province}` : null}
-              {this.selectedCountryZipRequired() ? `, ${order.zip}` : null}
+              {this.selectedCountryZipRequired() || order.zip ? `, ${order.zip}` : null}
             </p>
             <p>{order.country}</p>
             {

@@ -36,10 +36,12 @@ class ProductImages extends Component {
 
   render() {
     let contents = this.props.products.length === 1 ? (
-      // eslint-disable-next-line
+      // eslint-disable-next-line jsx-a11y/anchor-has-content
       <a
         href={this.getProductURL(this.props.products[0])}
         target="_blank"
+        rel="noreferrer"
+        title="Product Image"
         style={this.getBackgroundImageStyle(this.props.products[0])}
         className="msp__product-image msp__product-image--single"
       />
@@ -50,10 +52,12 @@ class ProductImages extends Component {
         <div>
           <div className="msp__product-image-grid">
             {this.props.products.slice(0, 4).map(product => (
-              // eslint-disable-next-line
+              // eslint-disable-next-line jsx-a11y/anchor-has-content
               <a
                 href={this.getProductURL(product)}
                 target="_blank"
+                rel="noreferrer"
+                title="Product Image"
                 key={product.imageKey ? `${product.imageKey}` : `${product.product_id}-${product.variant_id}`}
                 style={this.getBackgroundImageStyle(product)}
                 className="msp__product-image msp__product-image--multiple"

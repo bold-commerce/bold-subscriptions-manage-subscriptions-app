@@ -5,13 +5,18 @@ import classnames from 'classnames';
 
 const loggedMissingTranslations = {};
 
-const Translation = ({ textKey, value }) => (
-  <span className={classnames('ro-translation', `ro-translation-${textKey}`)} dangerouslySetInnerHTML={{ __html: value }} />
+const Translation = ({ textKey, value, classNames }) => (
+  <span className={classnames('ro-translation', `ro-translation-${textKey}`, classNames)} dangerouslySetInnerHTML={{ __html: value }} />
 );
 
 Translation.propTypes = {
   textKey: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
+  classNames: PropTypes.objectOf(PropTypes.bool),
+};
+
+Translation.defaultProps = {
+  classNames: {},
 };
 
 const applyMergeFields = (translations, textKey, mergeFields) => {

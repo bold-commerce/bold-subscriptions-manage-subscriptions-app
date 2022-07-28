@@ -36,12 +36,8 @@ const Message = ({
       style={style}
     >
       {dismissable ? (
-        <span
-          className="subscription-message-dismiss"
-          onClick={onDismissClick}
-          role="presentation"
-        >
-        x
+        <span className="subscription-message-dismiss" onClick={onDismissClick} role="presentation">
+          x
         </span>
         ) : null}
       {title ? (

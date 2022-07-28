@@ -118,7 +118,9 @@ class OrderProductEditQuantityBlock extends Component {
         ? order.order_product_exceptions.find(exception => exception.date === orderDate)
           .products.find(product => product.product_internal_id === prod.id).quantity
         : prod.quantity;
-      const basePrice = (prod.converted_price > 0 ? (prod.converted_price / 100).toFixed(2).toString() : prod.price);
+      const basePrice = (prod.converted_price > 0)
+        ? (prod.converted_price / 100).toFixed(2).toString()
+        : prod.price;
 
       return parseFloat(basePrice * parseInt(qty, 10));
     });
@@ -129,7 +131,9 @@ class OrderProductEditQuantityBlock extends Component {
     const { order } = this.props;
     const inputData = new FormData(this.formElement);
     const productTotals = order.order_products.map((prod) => {
-      const basePrice = (prod.converted_price > 0 ? (prod.converted_price / 100).toFixed(2).toString() : prod.price);
+      const basePrice = (prod.converted_price > 0)
+        ? (prod.converted_price / 100).toFixed(2).toString()
+        : prod.price;
 
       return parseFloat(basePrice * getQuantity(parseInt(inputData.get(`product_editing_quantity_${prod.id}`), 10)));
     });
@@ -270,7 +274,9 @@ class OrderProductEditQuantityBlock extends Component {
               <Translation textKey="product_editing_subtotal" />
               <span
                 className="product-info-price"
-                dangerouslySetInnerHTML={{ __html: formatMoney(this.state.subtotal, order.currency_format) }}
+                dangerouslySetInnerHTML={{
+                  __html: formatMoney(this.state.subtotal, order.currency_format),
+                }}
               />
             </h6>
           </div>

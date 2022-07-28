@@ -255,6 +255,54 @@
   }
 }
 
+.subscription-details-tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.subscription-details-tooltip .subscription-details-tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  width: 300px;
+  padding: 0.5rem 0.75rem;
+  background-color: transparentize(#333333, 0.05);
+  color: #fff;
+  text-align: center;
+  border-radius: 0.5rem;
+  left: 50%;
+  transform: translateY(-100%);
+  top: -5px;
+  margin-left: -150px;
+  text-decoration: none;
+  position: absolute;
+  z-index: 1020;
+  display: inline;
+  transition: 0.3s ease;
+}
+
+.subscription-details-tooltip .subscription-details-tooltip-text::after {
+  content: " ";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparentize(#333333, 0.05) transparent transparent transparent;
+}
+
+.subscription-details-tooltip:hover .subscription-details-tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.order-hook-tooltip {
+  margin-left: 5px;
+  font-size: 14px;
+  text-decoration: underline;
+  color: gray;
+}
+
 @media (max-width: 750px) {
   .subscription-header {
     display: block;

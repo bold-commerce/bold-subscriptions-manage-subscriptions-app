@@ -7,12 +7,18 @@ import * as actions from '../actions/index';
 export function* orderGetCashierCardData(action) {
   yield put(actions.orderGettingCashierCardData());
 
-  const response = yield call(requestHelpers.apiGetRequest, `orders/${action.payload.orderId}/cashier_card_data`);
+  const response = yield call(
+    requestHelpers.apiGetRequest,
+    `orders/${action.payload.orderId}/cashier_card_data`,
+  );
 
   if (response.success) {
     yield put(actions.orderGotCashierCardData(response.data));
   } else {
-    yield put(actions.orderGetCashierCardDataFailed(action.payload.orderId, response.errors.message));
+    yield put(actions.orderGetCashierCardDataFailed(
+      action.payload.orderId,
+      response.errors.message,
+    ));
   }
 }
 

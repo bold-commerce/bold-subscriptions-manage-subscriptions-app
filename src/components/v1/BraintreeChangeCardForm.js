@@ -5,7 +5,7 @@ import Button from './Button';
 import ButtonGroup from './ButtonGroup';
 import Field from './Field';
 import Message from './Message';
-import { PAYMENT_GATEWAY_STYLES, GATEWAY_INPUT_CLASSNAME } from '../../constants';
+import { PAYMENT_GATEWAY_STYLES, GATEWAY_INPUT_CLASSNAME, GENERIC_ERROR_MESSAGE, FEATURES } from '../../constants';
 import { copyThemeComputedStyles, CSS_PROPERTY_FORMAT } from '../../helpers/paymentGatewayHelpers';
 
 export default class BraintreeChangeCardForm extends Component {
@@ -30,46 +30,169 @@ export default class BraintreeChangeCardForm extends Component {
   componentDidMount() {
     const styles = copyThemeComputedStyles(PAYMENT_GATEWAY_STYLES.theme.input, 'INPUT', CSS_PROPERTY_FORMAT, this.state.customInputClassName || GATEWAY_INPUT_CLASSNAME);
 
-    braintree.client.create({
-      authorization: this.props.braintreePublishableKey,
-    }, (err, clientInstance) => {
-      braintree.hostedFields.create({
-        client: clientInstance,
-        styles: {
-          input: styles,
-          '.invalid': {
-            color: '#eb1c26',
-          },
-        },
-        fields: {
-          number: {
-            selector: '#braintree-number-field',
-            placeholder: '1234 1234 1234 1234',
-          },
-          expirationDate: {
-            selector: '#braintree-expiration-field',
-            placeholder: 'MM / YY',
-          },
-          cvv: {
-            selector: '#braintree-cvv-field',
-            placeholder: 'CVC',
-          },
-        },
-      }, (hostedFieldsErr, hostedFieldsInstance) => {
-        if (hostedFieldsErr) {
-          this.onError(hostedFieldsErr);
-          return;
-        }
+    if (FEATURES.includes('ro-sca-compatibility')) {
+      const { orderTotal } = this.props;
+      const allowableStatus = [
+        'authentication_unavailable',
+        'lookup_bypassed',
+        'lookup_not_enrolled',
+        'unsupported_card',
+      ];
+      braintree.client.create({
+        authorization: this.props.braintreePublishableKey,
+      }).then((clientInstance) => {
+        Promise.all([
+          braintree.hostedFields.create({
+            client: clientInstance,
+            styles: {
+              input: styles,
+              '.invalid': {
+                color: '#eb1c26',
+              },
+            },
+            fields: {
+              number: {
+                selector: '#braintree-number-field',
+                placeholder: '1234 1234 1234 1234',
+              },
+              expirationDate: {
+                selector: '#braintree-expiration-field',
+                placeholder: 'MM / YY',
+              },
+              cvv: {
+                selector: '#braintree-cvv-field',
+                placeholder: 'CVC',
+              },
+            },
+          }),
+          braintree.threeDSecure.create({
+            version: 2,
+            client: clientInstance,
+          }),
+        ]).then((instances) => {
+          const hostedFieldsInstance = instances[0];
+          const threeDSecureInstance = instances[1];
 
-        this.setState({
-          loading: false,
+          this.setState({
+            loading: false,
+          });
+
+          this.paymentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            hostedFieldsInstance.tokenize().then((tokenizePayload) => {
+              threeDSecureInstance.on('lookup-complete', (data, next) => {
+                next();
+              });
+              threeDSecureInstance.verifyCard({
+                amount: orderTotal > 0 ? orderTotal.toFixed(2) : 0.01, // amount must be > 0
+                nonce: tokenizePayload.nonce,
+                bin: tokenizePayload.details.bin,
+                email: this.props.customerEmail,
+                exemptionRequested: false, // Apply for an exemption.
+                challengeRequested: true, // Attempt to force the 3DS challenge.
+                billingAddress: {
+                  givenName: this.props.billingAddress.first_name,
+                  surname: this.props.billingAddress.last_name,
+                  phoneNumber: this.props.billingAddress.phone,
+                  streetAddress: this.props.billingAddress.address1,
+                  extendedAddress: this.props.billingAddress.address2,
+                  locality: this.props.billingAddress.city,
+                  postalCode: this.props.billingAddress.zip,
+                  countryCodeName: this.props.billingAddress.country,
+                },
+                additionalInformation: {
+                  shippingGivenName: this.props.shippingAddress.first_name,
+                  shippingSurname: this.props.shippingAddress.last_name,
+                  shippingPhone: this.props.shippingAddress.phone,
+                  shippingAddress: {
+                    streetAddress: this.props.shippingAddress.address1,
+                    extendedAddress: this.props.shippingAddress.address2,
+                    locality: this.props.shippingAddress.city,
+                    postalCode: this.props.shippingAddress.zip,
+                    countryCodeName: this.props.shippingAddress.country,
+                  },
+                },
+              }).then((verifyCardPayload) => {
+                const { threeDSecureInfo } = verifyCardPayload;
+                if (threeDSecureInfo.liabilityShiftPossible) {
+                  if (threeDSecureInfo.liabilityShifted) {
+                    this.props.saveCard(verifyCardPayload.nonce);
+                  } else {
+                    this.onError({ message: GENERIC_ERROR_MESSAGE });
+                  }
+                } else if (allowableStatus.includes(threeDSecureInfo.status)) {
+                  this.props.saveCard(verifyCardPayload.nonce);
+                } else {
+                  this.onError({ message: GENERIC_ERROR_MESSAGE });
+                }
+              }).catch((verifyCardErr) => {
+                let verifyError = verifyCardErr;
+                if (typeof verifyError.details !== 'undefined' &&
+                    typeof verifyError.details.originalError !== 'undefined' &&
+                    typeof verifyError.details.originalError.details !== 'undefined' &&
+                    typeof verifyError.details.originalError.details.originalError !== 'undefined' &&
+                    typeof verifyError.details.originalError.details.originalError.error !== 'undefined'
+                ) {
+                  verifyError = verifyError.details.originalError.details.originalError.error;
+                }
+                // We'd still like to have this error log out
+                // so it's easier to troublehsoot the SCA errors.
+                // eslint-disable-next-line no-console
+                console.error(verifyCardErr);
+                this.onError(verifyError);
+              });
+            }).catch((tokenizeErr) => {
+              this.onError(tokenizeErr);
+            });
+          });
+        }).catch((instancesErr) => {
+          this.onError(instancesErr);
         });
-        this.paymentForm.addEventListener('submit', (e) => {
-          e.preventDefault();
-          hostedFieldsInstance.tokenize(this.onPaymentMethodReceived);
+      }).catch((clientErr) => {
+        this.onError(clientErr);
+      });
+    } else {
+      braintree.client.create({
+        authorization: this.props.braintreePublishableKey,
+      }, (err, clientInstance) => {
+        braintree.hostedFields.create({
+          client: clientInstance,
+          styles: {
+            input: styles,
+            '.invalid': {
+              color: '#eb1c26',
+            },
+          },
+          fields: {
+            number: {
+              selector: '#braintree-number-field',
+              placeholder: '1234 1234 1234 1234',
+            },
+            expirationDate: {
+              selector: '#braintree-expiration-field',
+              placeholder: 'MM / YY',
+            },
+            cvv: {
+              selector: '#braintree-cvv-field',
+              placeholder: 'CVC',
+            },
+          },
+        }, (hostedFieldsErr, hostedFieldsInstance) => {
+          if (hostedFieldsErr) {
+            this.onError(hostedFieldsErr);
+            return;
+          }
+
+          this.setState({
+            loading: false,
+          });
+          this.paymentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            hostedFieldsInstance.tokenize(this.onPaymentMethodReceived);
+          });
         });
       });
-    });
+    }
   }
 
   onPaymentMethodReceived(tokenizeErr, payload) {
@@ -170,4 +293,28 @@ BraintreeChangeCardForm.propTypes = {
   braintreePublishableKey: PropTypes.string.isRequired,
   cancelOnClick: PropTypes.func.isRequired,
   saveCard: PropTypes.func.isRequired,
+  customerEmail: PropTypes.string.isRequired,
+  orderTotal: PropTypes.number.isRequired,
+  billingAddress: PropTypes.shape({
+    first_name: PropTypes.string,
+    last_name: PropTypes.string,
+    address1: PropTypes.string,
+    address2: PropTypes.string,
+    city: PropTypes.string,
+    province: PropTypes.string,
+    zip: PropTypes.string,
+    country: PropTypes.string,
+    phone: PropTypes.string,
+  }).isRequired,
+  shippingAddress: PropTypes.shape({
+    first_name: PropTypes.string,
+    last_name: PropTypes.string,
+    address1: PropTypes.string,
+    address2: PropTypes.string,
+    city: PropTypes.string,
+    province: PropTypes.string,
+    zip: PropTypes.string,
+    country: PropTypes.string,
+    phone: PropTypes.string,
+  }).isRequired,
 };

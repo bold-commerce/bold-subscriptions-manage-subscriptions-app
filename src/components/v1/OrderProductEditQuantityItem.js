@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import ProductImages from './ProductImages';
-import Translation from '../Translation';
 import Input from './Input';
 import formatMoney from '../../helpers/moneyFormatHelpers';
 import { PRODUCT_PROP_TYPE } from '../../constants/PropTypes';
@@ -13,7 +12,9 @@ class OrderProductEditQuantityItem extends Component {
   constructor(props) {
     super(props);
 
-    this.basePrice = (props.product.converted_price > 0 ? (props.product.converted_price / 100).toFixed(2).toString() : props.product.price);
+    this.basePrice = (props.product.converted_price > 0)
+      ? (props.product.converted_price / 100).toFixed(2).toString()
+      : props.product.price;
     this.state = {
       linePrice: props.calculateLineSubtotal(
         props.product.id, this.basePrice, props.quantity,
@@ -71,7 +72,9 @@ class OrderProductEditQuantityItem extends Component {
           <h6 id={`product_line_subtotal_${product.id}`} className="product-info-price">
             <span
               className="product-info-price"
-              dangerouslySetInnerHTML={{ __html: formatMoney(this.state.linePrice, order.currency_format) }}
+              dangerouslySetInnerHTML={{
+                __html: formatMoney(this.state.linePrice, order.currency_format),
+              }}
             />
           </h6>
         </div>
@@ -81,6 +84,10 @@ class OrderProductEditQuantityItem extends Component {
 }
 
 OrderProductEditQuantityItem.propTypes = {
+  order: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    currency_format: PropTypes.string,
+  }).isRequired,
   product: PRODUCT_PROP_TYPE.isRequired,
   quantity: PropTypes.number.isRequired,
   calculateLineSubtotal: PropTypes.func.isRequired,
@@ -97,10 +104,10 @@ OrderProductEditQuantityItem.defaultValue = {
 const mapStateToProps = (state, ownProps) => {
   const order = state.data.orders.find(o => o.id === ownProps.orderId);
   const product = order.order_products.find(p => p.id === ownProps.productId);
-  const quantity = ownProps.orderDate !== null &&
-    order.order_product_exceptions.find(exception => exception.date === ownProps.orderDate)
+  const quantity = ownProps.orderDate !== null
     && order.order_product_exceptions.find(exception => exception.date === ownProps.orderDate)
-    .products.find(p => p.product_internal_id === ownProps.productId)
+    && order.order_product_exceptions.find(exception => exception.date === ownProps.orderDate)
+      .products.find(p => p.product_internal_id === ownProps.productId)
     ? order.order_product_exceptions.find(exception => exception.date === ownProps.orderDate)
       .products.find(p => p.product_internal_id === ownProps.productId).quantity
     : product.quantity;

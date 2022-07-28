@@ -34,6 +34,7 @@ export function* orderProductSaveSwap(action) {
     product_id: action.payload.productId,
     variant_id: action.payload.variantId,
     order_shipping_rate: action.payload.orderShippingRate,
+    payment_id: action.payload.paymentId,
   });
 
   if (response.success) {
@@ -44,7 +45,11 @@ export function* orderProductSaveSwap(action) {
     ));
   } else {
     yield put(actions.orderProductSaveSwapFailed(
-      action.payload.orderId, action.payload.internalProductId, response.errors.message,
+      action.payload.orderId,
+      action.payload.internalProductId,
+      response.errors.message,
+      response.errors.token,
+      response.errors.payment_token,
     ));
   }
 }

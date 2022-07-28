@@ -64,11 +64,13 @@ class OrderProductSwapList extends Component {
     } = this.props;
 
     let swapProductMessage = null;
-    const exchangeRate = [0, 1, '', null].indexOf(order.currency_exchange_rate) === -1 && allowMulticurrencyDisplay ? order.currency_exchange_rate : 1;
+    const exchangeRate = [0, 1, '', null].indexOf(order.currency_exchange_rate) === -1
+      && allowMulticurrencyDisplay ? order.currency_exchange_rate : 1;
     const currencyFormat = !allowMulticurrencyDisplay ? null : order.currency_format;
     const price = (exchangeRate * this.state.selectedVariant.price);
     const priceDifference = this.state.selectedVariant.price_difference * exchangeRate;
-    const prepaidPriceDifference = this.state.selectedVariant.prepaid_price_difference * exchangeRate;
+    const prepaidPriceDifference = this.state.selectedVariant.prepaid_price_difference
+      * exchangeRate;
 
     if (this.state.selectedVariant.price_difference > 0) {
       swapProductMessage = (
@@ -177,6 +179,13 @@ class OrderProductSwapList extends Component {
 
 OrderProductSwapList.propTypes = {
   order: ORDER_PROP_TYPE.isRequired,
+  group: PropTypes.shape({
+    products_with_price_difference: PropTypes.arrayOf(PropTypes.shape({
+      handle: PropTypes.string,
+      product_id: PropTypes.number,
+      shopify_data: PropTypes.shape({}),
+    })),
+  }),
   product: PropTypes.shape({
     product_id: PropTypes.number.isRequired,
     shopify_data: PropTypes.shape().isRequired,

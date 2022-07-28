@@ -70,8 +70,17 @@ class OrderProductSwap extends Component {
   }
 
   render() {
-    const { order, product, group, allowMulticurrencyDisplay } = this.props;
-    const exchangeRate = [0, 1, '', null].indexOf(order.currency_exchange_rate) === -1 && allowMulticurrencyDisplay ? order.currency_exchange_rate : 1;
+    const {
+      order,
+      product,
+      group,
+      allowMulticurrencyDisplay,
+    } = this.props;
+
+    const exchangeRate = [0, 1, '', null].indexOf(order.currency_exchange_rate) === -1
+      && allowMulticurrencyDisplay
+      ? order.currency_exchange_rate
+      : 1;
     const currencyFormat = !allowMulticurrencyDisplay ? null : order.currency_format;
     const price = (exchangeRate * product.price) * 100;
 
@@ -169,7 +178,11 @@ OrderProductSwap.propTypes = {
   product: PRODUCT_PROP_TYPE.isRequired,
   group: PropTypes.shape({
     id: PropTypes.number.isRequired,
-    products_with_price_difference: PropTypes.array,
+    products_with_price_difference: PropTypes.arrayOf(PropTypes.shape({
+      handle: PropTypes.string,
+      product_id: PropTypes.number,
+      shopify_data: PropTypes.shape({}),
+    })),
   }),
   toggleSwap: PropTypes.func.isRequired,
   swapProductsReceived: PropTypes.bool,

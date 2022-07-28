@@ -6,10 +6,12 @@ import * as actions from '../../actions';
 import ProductImages from './ProductImages';
 import Separator from './Separator';
 import Translation from '../Translation';
+import Message from './Message';
 import UpdateOrderShippingMethod from './UpdateOrderShippingMethod';
 import formatMoney from '../../helpers/moneyFormatHelpers';
-import generateFakeShippingRate from '../../helpers/shippingRateHelpers';
 import ProductTitleTranslation from './ProductTitleTranslation';
+import StripeAuthenticateCharge from './StripeAuthenticateCharge';
+import BraintreeAuthenticateCardForm from './BraintreeAuthenticateCardForm';
 
 class OrderProductSwapConfirm extends Component {
   constructor(props) {
@@ -24,6 +26,8 @@ class OrderProductSwapConfirm extends Component {
     this.onChangeShippingMethod = this.onChangeShippingMethod.bind(this);
     this.cancelShippingRates = this.cancelShippingRates.bind(this);
     this.getShippingMethodInfo = this.getShippingMethodInfo.bind(this);
+    this.onAuthSuccess = this.onAuthSuccess.bind(this);
+    this.onAuthError = this.onAuthError.bind(this);
 
     this.props.dismissProductSwapMessage(props.order.id);
     this.props.dismissGetShippingRatesFailedMessage(props.order.id);
@@ -32,7 +36,7 @@ class OrderProductSwapConfirm extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.productSwapMessage) {
       if (nextProps.productSwapMessage.type === 'success' ||
-        nextProps.productSwapMessage.type === 'error') {
+        ((nextProps.productSwapMessage.type === 'error') && typeof nextProps.productSwapMessage.token === 'undefined')) {
         this.props.toggleSwap();
       }
     }
@@ -41,6 +45,46 @@ class OrderProductSwapConfirm extends Component {
   onChangeShippingMethod(shippingMethod) {
     this.setState({
       shippingRate: shippingMethod,
+    });
+  }
+
+  /* eslint-disable class-methods-use-this */
+  onAuthStart() {
+    // Nothing required.
+  }
+  /* eslint-enable class-methods-use-this */
+
+  onAuthSuccess(paymentId) {
+    const {
+      order, group, swapProduct, product, saveSwapProduct, variant,
+    } = this.props;
+
+    const shippingMethod = this.state.shippingRate;
+
+    saveSwapProduct(
+      order.id,
+      group.id,
+      swapProduct.id,
+      product.product_id,
+      variant.id,
+      shippingMethod,
+      paymentId,
+    );
+  }
+
+  onAuthError(error) {
+    if (!error) {
+      return;
+    }
+
+    // Wipe out the "requires authentication" token.
+    // This will "reset" the authentication component.
+    this.props.productSwapMessage.token = null;
+
+    this.setState({
+      // eslint-disable-next-line react/no-unused-state
+      updatingShippingMethod: false,
+      authError: error,
     });
   }
 
@@ -93,7 +137,9 @@ class OrderProductSwapConfirm extends Component {
   }
 
   render() {
-    const { product, variant, order, allowMulticurrencyDisplay } = this.props;
+    const {
+      product, variant, order, allowMulticurrencyDisplay,
+    } = this.props;
     const exchangeRate = [0, 1, '', null].indexOf(order.currency_exchange_rate) === -1 && allowMulticurrencyDisplay ? order.currency_exchange_rate : 1;
     const currencyFormat = !allowMulticurrencyDisplay ? null : order.currency_format;
     const price = variant.price * exchangeRate;
@@ -180,6 +226,37 @@ class OrderProductSwapConfirm extends Component {
       }
     }
 
+    let authenticateCardComponent = null;
+    if (this.props.productSwapMessage && this.props.productSwapMessage.token) {
+      switch (this.props.gatewayName) {
+        case 'stripe': {
+          authenticateCardComponent = (
+            <StripeAuthenticateCharge
+              orderId={order.id}
+              onAuthSuccess={this.onAuthSuccess}
+            />
+          );
+          break;
+        }
+        case 'braintree': {
+          authenticateCardComponent = (
+            <BraintreeAuthenticateCardForm
+              orderId={order.id}
+              onStart={this.onAuthStart}
+              onSuccess={this.onAuthSuccess}
+              onError={this.onAuthError}
+              buttonAlignment="right"
+            />
+          );
+          break;
+        }
+        default: {
+          authenticateCardComponent = null;
+          break;
+        }
+      }
+    }
+
     return (
       <Fragment>
         <Separator icon="&#8633;" textKey="order_product_swap_separator" key={`order-${order.id}`} />
@@ -228,7 +305,8 @@ class OrderProductSwapConfirm extends Component {
                         textKey="swap_product_prepaid_total_text"
                         mergeFields={{
                           total_prepaid_charges: formatMoney(
-                              (variant.prepaid_price_difference + this.getPrepaidShippingTotal()) * exchangeRate,
+                              (variant.prepaid_price_difference + this.getPrepaidShippingTotal())
+                              * exchangeRate,
                             order.currency_format,
                           ),
                         }}
@@ -238,6 +316,8 @@ class OrderProductSwapConfirm extends Component {
             }
           </UpdateOrderShippingMethod>
         </div>
+        {authenticateCardComponent}
+        {this.state.authError ? <Message type="error">{this.state.authError}</Message> : null}
       </Fragment>
     );
   }
@@ -246,7 +326,18 @@ class OrderProductSwapConfirm extends Component {
 OrderProductSwapConfirm.propTypes = {
   order: PropTypes.shape({
     id: PropTypes.number.isRequired,
-  }).isRequired,
+    currency_format: PropTypes.string,
+    currency_exchange_rate: PropTypes.string,
+    order_shipping_rate: PropTypes.shape({
+      price: PropTypes.string,
+    }),
+    order_fixed_recurrences: PropTypes.shape({
+      total_recurrences: PropTypes.number,
+      recurrence_count: PropTypes.number,
+      recur_after_limit: PropTypes.number,
+      one_charge_only: PropTypes.number,
+    }),
+  }),
   product: PropTypes.shape({
     product_id: PropTypes.number.isRequired,
     shopify_data: PropTypes.shape().isRequired,
@@ -264,17 +355,23 @@ OrderProductSwapConfirm.propTypes = {
     message: PropTypes.string,
     messageTextKey: PropTypes.string,
     type: PropTypes.string,
+    token: PropTypes.string,
   }),
   dismissProductSwapMessage: PropTypes.func.isRequired,
   dismissGetShippingRatesFailedMessage: PropTypes.func.isRequired,
   allowMulticurrencyDisplay: PropTypes.bool.isRequired,
+  gatewayName: PropTypes.string,
 };
 
 OrderProductSwapConfirm.defaultProps = {
+  order: PropTypes.shape({
+    id: null,
+  }),
   group: PropTypes.shape({
     products_with_price_difference: null,
   }),
   productSwapMessage: null,
+  gatewayName: '',
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -286,6 +383,7 @@ const mapStateToProps = (state, ownProps) => {
   const swapProduct = order.order_products.find(p => p.id === ownProps.swapProductId);
   const variant = product.shopify_data.variants.find(v => v.id === ownProps.variantId);
 
+  const gatewayName = state.data.general_settings.gateway_name;
   return {
     order,
     group,
@@ -299,15 +397,16 @@ const mapStateToProps = (state, ownProps) => {
     productSwapMessage:
       state.userInterface.productSwapMessages[ownProps.orderId],
     allowMulticurrencyDisplay: state.data.general_settings.allow_multicurrency_display,
+    gatewayName,
   };
 };
 
 const mapDispatchToProps = dispatch => ({
   saveSwapProduct: (
-    orderId, groupId, internalProductId, productId, variantId, orderShippingRate,
+    orderId, groupId, internalProductId, productId, variantId, orderShippingRate, paymentId,
   ) => {
     dispatch(actions.orderProductSaveSwap(
-      orderId, groupId, internalProductId, productId, variantId, orderShippingRate,
+      orderId, groupId, internalProductId, productId, variantId, orderShippingRate, paymentId,
     ));
   },
   dismissProductSwapMessage: (orderId, productId) => {

@@ -148,10 +148,10 @@ export const orderProductGetSwapFailed = (orderId, productId, message) => ({
 });
 
 export const orderProductSaveSwap =
-  (orderId, groupId, internalProductId, productId, variantId, orderShippingRate) => ({
+  (orderId, groupId, internalProductId, productId, variantId, orderShippingRate, paymentId) => ({
     type: types.ORDER_PRODUCT_SAVE_SWAP,
     payload: {
-      orderId, groupId, internalProductId, productId, variantId, orderShippingRate,
+      orderId, groupId, internalProductId, productId, variantId, orderShippingRate, paymentId,
     },
   });
 
@@ -164,9 +164,11 @@ export const orderProductSavedSwap = data => ({
   payload: data,
 });
 
-export const orderProductSaveSwapFailed = (orderId, productId, message) => ({
+export const orderProductSaveSwapFailed = (orderId, productId, message, token, paymentMethod) => ({
   type: types.ORDER_PRODUCT_SAVE_SWAP_FAILED,
-  payload: { orderId, productId, message },
+  payload: {
+    orderId, productId, message, token, paymentMethod,
+  },
 });
 
 export const orderProductSaveSwapConflict = orderId => ({

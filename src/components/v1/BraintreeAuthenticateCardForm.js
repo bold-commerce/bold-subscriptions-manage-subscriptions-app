@@ -1,27 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import ButtonGroup from './ButtonGroup';
-import Button from './Button';
+import ButtonGroup from '../v1/ButtonGroup';
+import Button from '../v1/Button';
 import * as actions from '../../actions';
 import { ORDER_PROP_TYPE } from '../../constants/PropTypes';
+import { GENERIC_ERROR_MESSAGE } from '../../constants';
+import orderTotal from '../../helpers/orderHelpers';
 
-
-class StripeAuthenticateCardForm extends Component {
+class BraintreeAuthenticateCardForm extends Component {
   constructor(props) {
     super(props);
 
-    let sdkInitialized = true;
-
-    try {
-      this.stripeApi = Stripe(props.stripePublishableKey);
-    } catch (e) {
-      sdkInitialized = false;
-    }
-
     this.state = {
-      sdkInitialized,
-      initialized: false,
       processing: false,
     };
     this.handleInitializeCardAuth = this.handleInitializeCardAuth.bind(this);
@@ -32,11 +23,10 @@ class StripeAuthenticateCardForm extends Component {
   componentDidUpdate(prevProps, prevState) {
     // Preventing infinite loop on tokenHandler due to any other state changes on component
     if (this.props.authenticateCardInitializeData === prevProps.authenticateCardInitializeData
-      && this.state.initialized === prevState.initialized
-      && this.props.authenticateCardSaveData === prevProps.authenticateCardSaveData) {
+      || (this.state.initialized === prevState.initialized
+      && this.props.authenticateCardSaveData === prevProps.authenticateCardSaveData)) {
       return;
     }
-
 
     // eslint-disable-next-line max-len
     if (Object.keys(this.props.authenticateCardInitializeData).length > 0 && !this.state.initialized) {
@@ -48,45 +38,76 @@ class StripeAuthenticateCardForm extends Component {
 
   createTokenHandler(response) {
     const { processing, initialized } = this.state;
+    const orderAmount = orderTotal(this.props.order);
 
     if (processing && initialized) {
       return;
     }
-
     this.setState({
       processing: true,
       initialized: true,
     });
 
-    this.stripeApi
-      .handleCardSetup(response.client_secret, { payment_method: response.payment_method })
-      .then(result => this.handleTokenResult(result));
+    braintree.client.create({
+      // Use the generated client token to instantiate the Braintree client.
+      authorization: this.props.braintreePublishableKey,
+    }).then(clientInstance => braintree.threeDSecure.create({
+      version: 2,
+      client: clientInstance,
+    })).then((threeDSecureInstance) => {
+      threeDSecureInstance.on('lookup-complete', (data, next) => {
+        next();
+      });
+      threeDSecureInstance.verifyCard({
+        amount: orderAmount > 0 ? orderAmount : 0.01, // amount must be > 0
+        nonce: response.nonce,
+        bin: response.bin,
+      }).then((resp) => {
+        this.handleTokenResult(resp);
+      }).catch((err) => {
+        this.handleTokenResult({
+          error: err,
+          threeDSecureInfo: {},
+          status: 'error',
+        });
+      });
+    }).catch(() => {
+      this.props.onError(GENERIC_ERROR_MESSAGE);
+    });
   }
 
   handleTokenResult(result) {
-    const { saveCardAuth, onError, orderId } = this.props;
+    const {
+      onError, saveCardAuth, orderId,
+    } = this.props;
+    const allowableStatus = [
+      'authentication_unavailable',
+      'lookup_bypassed',
+      'lookup_not_enrolled',
+      'unsupported_card',
+    ];
     this.setState({ processing: false });
-    // Handle Error
-    if (result.error && !(result.error.setup_intent && result.error.setup_intent.status === 'succeeded')) {
-      onError(result.error.message);
-      return;
+    const { threeDSecureInfo } = result;
+    if (threeDSecureInfo.liabilityShiftPossible) {
+      if (threeDSecureInfo.liabilityShifted) {
+        saveCardAuth(orderId, result);
+      } else {
+        onError(GENERIC_ERROR_MESSAGE);
+      }
+    } else if (allowableStatus.includes(threeDSecureInfo.status)) {
+      saveCardAuth(orderId, result);
+    } else {
+      onError(GENERIC_ERROR_MESSAGE);
     }
-
-    // eslint-disable-next-line max-len
-    saveCardAuth(orderId, result.error && result.error.setup_intent
-      ? result.error.setup_intent
-      : result.setupIntent);
   }
 
   handleInitializeCardAuth() {
     const {
       order, initializeCardAuth, authenticateCardInitializeLoading, onStart,
     } = this.props;
-    const { processing } = this.state;
-    if (authenticateCardInitializeLoading || processing) {
+    if (authenticateCardInitializeLoading) {
       return;
     }
-
     this.setState({ initialized: false });
     onStart();
     initializeCardAuth(order.id);
@@ -97,20 +118,19 @@ class StripeAuthenticateCardForm extends Component {
       authenticateCardSaveLoading,
       authenticateCardInitializeLoading,
     } = this.props;
-    const { sdkInitialized, processing } = this.state;
     const isProcessing = authenticateCardSaveLoading
-      || authenticateCardInitializeLoading || processing;
+      || authenticateCardInitializeLoading;
 
     return (
       <React.Fragment>
-        <ButtonGroup align="left">
+        <ButtonGroup align={this.props.buttonAlignment}>
           <Button
             name="reauth_credit_card"
-            loading={isProcessing}
+            loading={isProcessing || this.state.processing}
             type="submit"
             textKey="reauth_card_button_text"
-            disabled={isProcessing}
-            onClick={() => sdkInitialized && this.handleInitializeCardAuth()}
+            disabled={isProcessing || this.state.processing}
+            onClick={() => this.handleInitializeCardAuth()}
           />
         </ButtonGroup>
       </React.Fragment>
@@ -118,10 +138,10 @@ class StripeAuthenticateCardForm extends Component {
   }
 }
 
-StripeAuthenticateCardForm.propTypes = {
+BraintreeAuthenticateCardForm.propTypes = {
   orderId: PropTypes.number,
   order: ORDER_PROP_TYPE.isRequired,
-  stripePublishableKey: PropTypes.string.isRequired,
+  braintreePublishableKey: PropTypes.string.isRequired,
   initializeCardAuth: PropTypes.func.isRequired,
   saveCardAuth: PropTypes.func.isRequired,
   authenticateCardInitializeLoading: PropTypes.bool,
@@ -131,19 +151,22 @@ StripeAuthenticateCardForm.propTypes = {
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   onStart: PropTypes.func.isRequired,
+  buttonAlignment: PropTypes.string,
 };
 
-StripeAuthenticateCardForm.defaultProps = {
+BraintreeAuthenticateCardForm.defaultProps = {
   orderId: null,
   authenticateCardInitializeLoading: false,
   authenticateCardSaveLoading: false,
   authenticateCardSaveData: {},
   authenticateCardInitializeData: {},
+  buttonAlignment: 'left',
 };
 
 const mapStateToProps = (state, ownProps) => {
   const { userInterface, data } = state;
   const order = data.orders.find(o => o.id === ownProps.orderId);
+  const alignment = data.buttonAlignment;
   // eslint-disable-next-line max-len
   const authenticateCardInitializeLoading = userInterface.authenticateCardInitializeLoading[ownProps.orderId] || false;
   // eslint-disable-next-line max-len
@@ -151,7 +174,7 @@ const mapStateToProps = (state, ownProps) => {
   // eslint-disable-next-line max-len
   const authenticateCardSaveLoading = userInterface.authenticateCardSaveLoading[ownProps.orderId] || false;
   const authenticateCardSaveData = userInterface.authenticateCardSaveData[ownProps.orderId] || {};
-  const stripePublishableKey = state.data.general_settings.gateway_token;
+  const braintreePublishableKey = state.data.general_settings.gateway_token;
 
   return {
     order,
@@ -159,7 +182,8 @@ const mapStateToProps = (state, ownProps) => {
     authenticateCardSaveLoading,
     authenticateCardInitializeData,
     authenticateCardSaveData,
-    stripePublishableKey,
+    braintreePublishableKey,
+    alignment,
   };
 };
 
@@ -172,4 +196,4 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(StripeAuthenticateCardForm);
+export default connect(mapStateToProps, mapDispatchToProps)(BraintreeAuthenticateCardForm);

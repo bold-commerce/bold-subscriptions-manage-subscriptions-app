@@ -39,7 +39,12 @@ class TransactionHistoryBlock extends Component {
           if (columnName === 'shopify_order_num') {
             if (log.shopify_order_token) {
               carry.push(
-                <a href={`/account/orders/${log.shopify_order_token}`} className="text-button" target="_blank">
+                <a
+                  href={`/account/orders/${log.shopify_order_token}`}
+                  className="text-button"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   {columnValue}
                 </a>,
               );
