@@ -6,6 +6,8 @@ import Translation from '../Translation';
 // Components
 import StripeAuthenticateCardForm from './StripeAuthenticateCardForm';
 import * as actions from '../../actions';
+import CashierAuthenticateCardForm from '../v2/CashierAuthenticateCardForm';
+import BraintreeAuthenticateCardForm from './BraintreeAuthenticateCardForm';
 
 class SubscriptionGroupAuthCreditCard extends Component {
   constructor(props) {
@@ -97,6 +99,22 @@ class SubscriptionGroupAuthCreditCard extends Component {
     switch (gatewayName) {
       case 'stripe':
         cardAuthenticationGateway = (<StripeAuthenticateCardForm
+          orderId={orderId}
+          onStart={this.handleAuthenticationStart}
+          onSuccess={this.handleAuthenticationSuccess}
+          onError={this.handleAuthenticationError}
+        />);
+        break;
+      case 'cashier':
+        cardAuthenticationGateway = (<CashierAuthenticateCardForm
+          orderId={orderId}
+          onStart={this.handleAuthenticationStart}
+          onSuccess={this.handleAuthenticationSuccess}
+          onError={this.handleAuthenticationError}
+        />);
+        break;
+      case 'braintree':
+        cardAuthenticationGateway = (<BraintreeAuthenticateCardForm
           orderId={orderId}
           onStart={this.handleAuthenticationStart}
           onSuccess={this.handleAuthenticationSuccess}

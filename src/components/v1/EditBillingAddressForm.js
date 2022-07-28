@@ -46,7 +46,7 @@ class EditBillingAddressForm extends Component {
   }
 
   getCountryOptions() {
-    const { countries } = this.props;
+    const { countries, isBillingOutsideShippingZonesEnabled } = this.props;
     const countryOptions = [];
     let restOfWorldFound = false;
 
@@ -57,6 +57,10 @@ class EditBillingAddressForm extends Component {
         countryOptions.push({ name: country.name });
       }
     });
+
+    if (isBillingOutsideShippingZonesEnabled) {
+      restOfWorldFound = true;
+    }
 
     if (restOfWorldFound) {
       Object.keys(window.Countries).forEach((country) => {
@@ -111,6 +115,7 @@ class EditBillingAddressForm extends Component {
     e.preventDefault();
 
     this.setState({
+      selectedProvince: inputData.get('billing_province'),
       updateBillingAddressButtonDisabled: true,
       updatingBillingAddress: true,
     });
@@ -239,7 +244,7 @@ class EditBillingAddressForm extends Component {
               defaultValue={order.billing_city}
               onChange={this.checkFields}
             />
-            {this.selectedCountryZipRequired() ?
+            {this.selectedCountryZipRequired() || order.billing_zip ?
               <InputField
                 name="billing_zip"
                 id="billing_zip"
@@ -287,7 +292,7 @@ class EditBillingAddressForm extends Component {
             <p>
               {order.billing_city}
               {selectedCountryHasProvinces ? ` ${order.billing_province}` : null}
-              {this.selectedCountryZipRequired() ? `, ${order.billing_zip}` : null}
+              {this.selectedCountryZipRequired() || order.billing_zip ? `, ${order.billing_zip}` : null}
             </p>
             <p>{order.billing_country}</p>
             {
@@ -319,6 +324,7 @@ EditBillingAddressForm.propTypes = {
   billingMessage: MESSAGE_PROP_TYPE,
   dismissBillingMessage: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
+  isBillingOutsideShippingZonesEnabled: PropTypes.bool.isRequired,
 };
 
 EditBillingAddressForm.defaultProps = {
@@ -331,6 +337,8 @@ const mapStateToProps = (state, ownProps) => ({
   order: state.data.orders.find(order => order.id === ownProps.orderId),
   countries: state.data.countries,
   billingMessage: state.userInterface.billingMessages[ownProps.orderId],
+  isBillingOutsideShippingZonesEnabled:
+    state.data.general_settings.is_billing_outside_shipping_zones_enabled,
 });
 const mapDispatchToProps = dispatch => ({
   updateBillingAddress: (orderId, billingAddress) => {

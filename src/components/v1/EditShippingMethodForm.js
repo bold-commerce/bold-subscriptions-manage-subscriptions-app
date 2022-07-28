@@ -73,9 +73,15 @@ class EditShippingMethodForm extends Component {
   }
 
   render() {
-    const { order, shippingMethodMessage, allowMulticurrencyDisplay, disabled } = this.props;
-    let exchangeRate = !allowMulticurrencyDisplay ? 1 : order.currency_exchange_rate;
-    let currencyFormat = !allowMulticurrencyDisplay ? null : order.currency_format;
+    const {
+      order,
+      shippingMethodMessage,
+      allowMulticurrencyDisplay,
+      disabled,
+    } = this.props;
+
+    const exchangeRate = !allowMulticurrencyDisplay ? 1 : order.currency_exchange_rate;
+    const currencyFormat = !allowMulticurrencyDisplay ? null : order.currency_format;
 
     return (
       <div>
@@ -91,7 +97,11 @@ class EditShippingMethodForm extends Component {
             : (
               <React.Fragment>
                 <p dangerouslySetInnerHTML={{
-                  __html: UpdateOrderShippingMethod.showShippingSource(order.order_shipping_rate, exchangeRate, currencyFormat),
+                  __html: UpdateOrderShippingMethod.showShippingSource(
+                    order.order_shipping_rate,
+                    exchangeRate,
+                    currencyFormat,
+                    ),
                 }}
                 />
                 {disabled ? null : this.renderEditButton()}

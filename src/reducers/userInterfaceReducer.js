@@ -473,6 +473,8 @@ export default function userInterface(passedState, action) {
           [action.payload.orderId]: {
             message: action.payload.message,
             type: 'error',
+            token: action.payload.token,
+            paymentMethod: action.payload.paymentMethod,
           },
         },
       };

@@ -183,7 +183,12 @@ UpcomingOrderBuildABox.propTypes = {
   buildABoxNextOrders: PropTypes.shape({
     date: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired,
-    choices: PropTypes.array.isRequired,
+    choices: PropTypes.arrayOf(PropTypes.shape({
+      product_id: PropTypes.number,
+      quantity: PropTypes.number,
+      slot_id: PropTypes.number,
+      variant_id: PropTypes.number,
+    })).isRequired,
   }).isRequired,
   products: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   orderId: PropTypes.number.isRequired,

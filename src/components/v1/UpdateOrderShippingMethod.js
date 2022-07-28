@@ -105,12 +105,16 @@ class UpdateOrderShippingMethod extends Component {
   }
 
   getShippingRateOptions() {
-    return this.props.shippingRates.length > 0 ?
-      this.props.shippingRates.map(rate => ({
-        name: UpdateOrderShippingMethod.showShippingSource(rate, this.props.order.currency_exchange_rate, this.props.order.currency_format), value: rate.hash,
+    return this.props.shippingRates.length > 0
+      ? this.props.shippingRates.map(rate => ({
+        name: UpdateOrderShippingMethod.showShippingSource(
+          rate,
+          this.props.order.currency_exchange_rate,
+          this.props.order.currency_format,
+        ),
+        value: rate.hash,
       }))
-      :
-      [];
+      : [];
   }
 
   shippingRateChange(e) {

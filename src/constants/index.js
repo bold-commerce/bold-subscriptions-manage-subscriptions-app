@@ -29,3 +29,5 @@ export const PAYMENT_GATEWAY_STYLES = {
     ],
   },
 };
+
+export const GENERIC_ERROR_MESSAGE = 'There was a problem updating your credit card; please double check your payment information and try again';

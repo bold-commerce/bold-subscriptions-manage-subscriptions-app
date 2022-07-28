@@ -56,13 +56,11 @@ class UpcomingOrdersBlock extends Component {
             <Translation textKey="upcoming_order_date" />
           </h5>
           <p className="upcoming-order-edit-date">{moment(this.state.editQuantityDate).format('MMMM D, YYYY')}</p>
-          {
-            <OrderProductEditQuantityBlock
-              orderId={order.id}
-              toggleEdit={this.toggleEditQuantity}
-              orderDate={this.state.editQuantityDate}
-            />
-          }
+          <OrderProductEditQuantityBlock
+            orderId={order.id}
+            toggleEdit={this.toggleEditQuantity}
+            orderDate={this.state.editQuantityDate}
+          />
         </div>
       );
     }

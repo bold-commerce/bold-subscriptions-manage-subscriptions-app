@@ -26,7 +26,7 @@ const Input = ({
     window
       .manageSubscription
       .displaySettings
-      .input_classname || DEFAULT_INPUT_CLASSNAME
+      .input_classname || DEFAULT_INPUT_CLASSNAME,
   );
   inputClassNames = classnames(inputClassNames);
 

@@ -12,6 +12,7 @@ import SpreedlyChangeCardForm from './SpreedlyChangeCardForm';
 import V2CashierChangeCardForm from '../v2/CashierChangeCardForm';
 import { MESSAGE_PROP_TYPE, ORDER_PROP_TYPE } from '../../constants/PropTypes';
 import CardInformationBlock from './CardInformationBlock';
+import orderTotal from '../../helpers/orderHelpers';
 
 class PaymentInformationBlock extends Component {
   constructor(props) {
@@ -93,6 +94,9 @@ class PaymentInformationBlock extends Component {
         paymentGatewayForm = (
           <BraintreeChangeCardForm
             {...baseProps}
+            customerEmail={customerEmail}
+            shippingAddress={shippingAddress}
+            orderTotal={orderTotal(order)}
             braintreePublishableKey={this.props.gatewayToken}
           />
         );
@@ -175,7 +179,7 @@ class PaymentInformationBlock extends Component {
     let body = <p><Translation textKey="credit_card_loading" /></p>;
     let blockProps;
 
-    if ((editing || saving) && !hasCardError) {
+    if ((editing || saving)) {
       body = this.getGatewayChangeCardForm();
     } else {
       body = (
@@ -196,7 +200,7 @@ class PaymentInformationBlock extends Component {
       };
     } else {
       const editTitleTranslationKey = hasCardError && !(this.props.gatewayName === 'cashier') ? 'msp_update_card_text' : 'edit_button_text';
-      const showEditTitle = (!hasCardError && !saving && !editing);
+      const showEditTitle = (!saving && !editing);
 
       blockProps = {
         showEditTitle,

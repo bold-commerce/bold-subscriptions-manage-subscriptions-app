@@ -35,6 +35,11 @@ class App extends Component {
 
   componentDidMount() {
     this.props.initialize();
+    window.onpageshow = (event) => {
+      if (event.persisted) {
+        window.location.reload();
+      }
+    };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -118,7 +123,11 @@ App.propTypes = {
   loadingPercentage: PropTypes.number.isRequired,
   loadingProgress: PropTypes.number.isRequired,
   orders: PropTypes.arrayOf(PropTypes.shape({})),
-  translations: PropTypes.shape({}).isRequired,
+  translations: PropTypes.shape({
+    progress_authenticating: PropTypes.string,
+    progress_loading_order: PropTypes.string,
+    progress_done: PropTypes.string,
+  }).isRequired,
   customerLoggedOutError: PropTypes.bool.isRequired,
 };
 

@@ -9,6 +9,7 @@ import Message from './Message';
 import * as actions from '../../actions';
 import ButtonGroup from './ButtonGroup';
 import { MESSAGE_PROP_TYPE, ORDER_PROP_TYPE } from '../../constants/PropTypes';
+import { DEFAULT_FREQUENCIES, DEFAULT_TYPES } from '../../constants/DefaultIntervals';
 
 class OrderFrequencyBlock extends Component {
   constructor(props) {
@@ -29,10 +30,11 @@ class OrderFrequencyBlock extends Component {
     this.state = {
       editing: false,
       selectedFrequency: order.interval_number,
-      selectedInterval: this.matchIntervalType(order.interval_type_id),
+      selectedInterval: '',
       updatingFrequencyInterval: false,
       updateFrequencyIntervalButtonDisabled: true,
     };
+    this.state.selectedInterval = this.matchIntervalType(order.interval_type_id);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -47,8 +49,10 @@ class OrderFrequencyBlock extends Component {
   getFrequencyOptions() {
     const { group } = this.props;
     const frequencyArray = [];
+    const maxValue = (group && group.id) ? group.frequency_info.frequency_max :
+      DEFAULT_FREQUENCIES;
 
-    for (let i = 0; i < group.frequency_info.frequency_max; i += 1) {
+    for (let i = 0; i < maxValue; i += 1) {
       frequencyArray.push({ name: i + 1 });
     }
     return frequencyArray;
@@ -57,26 +61,45 @@ class OrderFrequencyBlock extends Component {
   getIntervalOptions() {
     const { group } = this.props;
     const intervalArray = [];
-
-    for (let i = 0; i < group.frequency_info.frequency_types.length; i += 1) {
-      const frequencyTextKey = `interval_type_${group.frequency_info.frequency_types[i].interval_id}`;
-      const frequencyTranslationText =
-        window.manageSubscription.initialState.data.translations[frequencyTextKey];
-      intervalArray.push({
-        name: frequencyTranslationText,
-        value: group.frequency_info.frequency_types[i].interval_text,
-        id: group.frequency_info.frequency_types[i].interval_id,
-      });
+    if (group && group.id) {
+      for (let i = 0; i < group.frequency_info.frequency_types.length; i += 1) {
+        const frequencyTextKey = `interval_type_${group.frequency_info.frequency_types[i].interval_id}`;
+        const frequencyTranslationText =
+          window.manageSubscription.initialState.data.translations[frequencyTextKey];
+        intervalArray.push({
+          name: frequencyTranslationText,
+          value: group.frequency_info.frequency_types[i].interval_text,
+          id: group.frequency_info.frequency_types[i].interval_id,
+        });
+      }
+    } else {
+      for (let i = 0; i < DEFAULT_TYPES.length; i += 1) {
+        const frequencyTranslationText =
+          window.manageSubscription.initialState.data
+            .translations[DEFAULT_TYPES[i].text_key];
+        intervalArray.push({
+          name: frequencyTranslationText,
+          value: DEFAULT_TYPES[i].value,
+          id: DEFAULT_TYPES[i].id,
+        });
+      }
     }
     return intervalArray;
   }
 
   matchIntervalType(intervalType) {
     const { group } = this.props;
-
-    for (let i = 0; i < group.frequency_info.frequency_types.length; i += 1) {
-      if (intervalType === group.frequency_info.frequency_types[i].interval_id) {
-        return group.frequency_info.frequency_types[i].interval_text;
+    if (group && group.id) {
+      for (let i = 0; i < group.frequency_info.frequency_types.length; i += 1) {
+        if (intervalType === group.frequency_info.frequency_types[i].interval_id) {
+          return group.frequency_info.frequency_types[i].interval_text;
+        }
+      }
+    } else {
+      for (let i = 0; i < DEFAULT_TYPES.length; i += 1) {
+        if (intervalType === DEFAULT_TYPES[i].id) {
+          return DEFAULT_TYPES[i].value;
+        }
       }
     }
     return null;
@@ -114,9 +137,17 @@ class OrderFrequencyBlock extends Component {
     const inputData = new FormData(this.formElement);
     let intervalId = null;
 
-    for (let i = 0; i < group.frequency_info.frequency_types.length; i += 1) {
-      if (inputData.get('interval') === group.frequency_info.frequency_types[i].interval_text) {
-        intervalId = group.frequency_info.frequency_types[i].interval_id;
+    if (group && group.id) {
+      for (let i = 0; i < group.frequency_info.frequency_types.length; i += 1) {
+        if (inputData.get('interval') === group.frequency_info.frequency_types[i].interval_text) {
+          intervalId = group.frequency_info.frequency_types[i].interval_id;
+        }
+      }
+    } else {
+      for (let i = 0; i < DEFAULT_TYPES.length; i += 1) {
+        if (inputData.get('interval') === DEFAULT_TYPES[i].value) {
+          intervalId = DEFAULT_TYPES[i].id;
+        }
       }
     }
     const formInformation = {
@@ -230,7 +261,20 @@ OrderFrequencyBlock.propTypes = {
   dismissFrequencyIntervalMessage: PropTypes.func.isRequired,
   frequencyIntervalMessage: MESSAGE_PROP_TYPE,
   order: ORDER_PROP_TYPE.isRequired,
-  group: PropTypes.shape({}).isRequired,
+  group: PropTypes.shape({
+    id: PropTypes.number,
+    is_swap_enabled: PropTypes.bool,
+    frequency_info: PropTypes.shape({
+      frequency_max: PropTypes.number,
+      is_fixed_interval: PropTypes.bool,
+      frequency_types: PropTypes.arrayOf(PropTypes.shape({
+        interval_id: PropTypes.number,
+        estimated_days: PropTypes.number,
+        interval_text: PropTypes.string,
+        interval_type: PropTypes.string,
+      })),
+    }),
+  }).isRequired,
   updateFrequencyInterval: PropTypes.func.isRequired,
 };
 

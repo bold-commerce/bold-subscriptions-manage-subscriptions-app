@@ -174,17 +174,53 @@ class OrderProduct extends Component {
     return null;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  renderOrderHookDetails(textKey, tooltipTextKey, mergeFields) {
+    return (
+      <span className="order-hook-tooltip subscription-details-tooltip">
+        <Translation textKey={textKey} />
+        <Translation
+          classNames={{ 'subscription-details-tooltip-text': true }}
+          textKey={tooltipTextKey}
+          mergeFields={mergeFields}
+        />
+      </span>
+    );
+  }
+
   render() {
     const {
       order, product, group, productRemoveMessage, allowMulticurrencyDisplay,
     } = this.props;
     let removeButtons;
+    let setPriceHook = null;
+    let reduceQuantityHook = null;
     const exchangeRate = [0, 1, '', null].indexOf(order.currency_exchange_rate) === -1 && allowMulticurrencyDisplay ? order.currency_exchange_rate : 1;
     const currencyFormat = !allowMulticurrencyDisplay ? null : order.currency_format;
     const price = (exchangeRate * product.price) * 100;
-
     if (order.order_hooks.length > 0) {
       removeButtons = null;
+      order.order_hooks.forEach((hook) => {
+        if (hook.bold_product_id === product.id) {
+          if (hook.title === 'switch_price') {
+            const newPrice = formatMoney((exchangeRate * hook.new_price) * 100, currencyFormat);
+            setPriceHook = this.renderOrderHookDetails('order_product_price_hook_warning',
+              'order_product_price_hook_change', {
+                new_price: newPrice || '',
+                orders_remaining: hook.orders_remaining || '',
+              });
+          } else if (hook.title === 'reduce_quantity') {
+            const willRemove = product.quantity <= hook.quantity;
+            const tooltipTextKey = willRemove ? 'order_product_quantity_hook_removed' :
+              'order_product_quantity_hook_reduced';
+            reduceQuantityHook = this.renderOrderHookDetails('order_product_quantity_hook_warning',
+              tooltipTextKey, {
+                quantity: hook.quantity || '',
+                orders_remaining: hook.orders_remaining || '',
+              });
+          }
+        }
+      });
     } else if (!this.state.dismissConflict && productRemoveMessage && productRemoveMessage.type === 'conflict') {
       removeButtons = (
         <div className="align-left order-product-remove-shipping-rates">
@@ -263,7 +299,11 @@ class OrderProduct extends Component {
                 { this.renderProductTitle() }
                 { this.renderProductProperties() }
                 <p>
-                  <span className="product-info-price" dangerouslySetInnerHTML={{ __html: formatMoney(price, currencyFormat) }} />
+                  <span
+                    className="product-info-price"
+                    dangerouslySetInnerHTML={{ __html: formatMoney(price, currencyFormat) }}
+                  />
+                  {setPriceHook}
                 </p>
                 <p>
                   <Translation
@@ -272,6 +312,7 @@ class OrderProduct extends Component {
                       quantity: product.quantity,
                     }}
                   />
+                  {reduceQuantityHook}
                 </p>
               </div>
             </div>
@@ -298,7 +339,7 @@ OrderProduct.propTypes = {
   dismissProductRemoveMessage: PropTypes.func.isRequired,
   dismissGetShippingRatesFailedMessage: PropTypes.func.isRequired,
   disallowedLineItemProperties: PropTypes.arrayOf(PropTypes.string).isRequired,
-  allowMulticurrencyDisplay: PropTypes.bool.isRequired,
+  allowMulticurrencyDisplay: PropTypes.bool,
 };
 
 OrderProduct.defaultProps = {

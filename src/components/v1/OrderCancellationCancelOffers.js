@@ -342,7 +342,6 @@ class OrderCancellationCancelOffers extends Component {
   }
   render() {
     const { cancelDiscountMessage, cancelReason } = this.props;
-    const { numOffers } = this.state;
 
     if (cancelDiscountMessage) {
       return (

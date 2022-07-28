@@ -65,7 +65,7 @@ class SubscriptionGroup extends Component {
               </p>
             </div>
             <div className={classnames('subscription-content', this.state.contentAltered ? '' : 'altered')}>
-              <AddressShippingBlock orderId={order.id} disabled={order.status !== 0} />
+              <AddressShippingBlock orderId={order.id} />
               <PaymentInformationBlock orderId={order.id} status={order.status} />
               <OrderProductsBlock orderId={order.id} disabled={order.status !== 0} />
               <UpcomingOrdersBlock orderId={order.id} disabled={order.status !== 0} />

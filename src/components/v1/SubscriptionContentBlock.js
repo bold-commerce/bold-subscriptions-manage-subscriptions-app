@@ -95,7 +95,7 @@ SubscriptionContentBlock.defaultProps = {
   toggleVisibility: () => {},
   className: '',
   toggleable: true,
-  opened: false
+  opened: false,
 };
 
 export default SubscriptionContentBlock;
